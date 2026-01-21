@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: crs-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: crs_db
+      MYSQL_USER: crs_user
+      MYSQL_PASSWORD: crs_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./Database_Scripts/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro
+      - ./Database_Scripts/data.sql:/docker-entrypoint-initdb.d/2-data.sql:ro
+    networks:
+      - crs-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tomee:
+    image: tomee:9.1.0-jre17-webprofile
+    container_name: crs-tomee
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./target/course-recovery-system.war:/usr/local/tomee/webapps/ROOT.war:ro
+      - ./.env:/usr/local/tomee/conf/.env:ro
+    environment:
+      JAVA_OPTS: "-Xmx512m -Djava.security.egd=file:/dev/./urandom"
+      DB_URL: "jdbc:mysql://mysql:3306/crs_db?useSSL=false&serverTimezone=UTC"
+      DB_USER: crs_user
+      DB_PASSWORD: crs_password
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - crs-network
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  crs-network:
+    driver: bridge
