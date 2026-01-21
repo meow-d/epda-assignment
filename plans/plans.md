@@ -1,0 +1,106 @@
+# epda plans
+
+## part 1 sections
+- introduction (an introduction to distributed computing)
+- modern enterprise frameworks (java spring boot vs node.js)
+- rest-based architecture
+- ai integration and orchestration
+- conclusion 
+- references 
+
+## part 2 folder structure
+- src
+  - main/java/com/crs
+    - model
+      - User.java
+      - Student.java
+      - Course.java
+      - RecoveryPlan.java
+      - Grade.java
+    - ejb
+      - UserEJB.java
+      - AcademicEJB.java
+      - RecoveryEJB.java
+    - servlet
+      - AuthServlet.java
+      - AdminServlet.java
+      - OfficerServlet.java
+    - dao
+      - UserDAO.java
+      - StudentDAO.java
+      - RecoveryDAO.java
+    - util
+      - DBConnect.java
+      - EmailUtil.java
+  - webapp
+    - WEB-INF
+      - web.xml
+    - css
+      - style.css
+    - login.jsp
+    - admin
+      - dashboard.jsp
+      - manageUsers.jsp
+    - officer
+      - dashboard.jsp
+      - recoveryPlan.jsp
+      - eligibility.jsp
+      - academicReport.jsp
+    - error.jsp
+- Database_Scripts
+  - schema.sql
+  - data.sql
+- .env (gitignored folder for SMTP credentials)
+
+## part 2 documentation sections
+- cover page
+- table of contents
+- web components design
+  - brief description of how the web component technologies are used (jsps, servlets).
+- web page design
+  - general navigation chart of all pages.
+- business tier design
+  - brief description of how the technologies are used (ejbs).
+- system architecture overview
+  - brief description of the system architecture and uml diagrams.
+  - interconnection among the tiers.
+- database design
+  - description of each table and an e-r diagram.
+  - design of database access apis.
+- references
+
+## database tables
+- Users
+  - id (PK)
+  - username
+  - password
+  - role
+  - email
+  - status
+- Students
+  - id (PK)
+  - name
+  - program
+  - email
+  - current_cgpa
+- Courses
+  - code (PK)
+  - title
+  - credit_hours
+- Grades
+  - student_id (FK)
+  - course_code (FK)
+  - semester
+  - year
+  - attempt_no
+  - grade
+  - grade_point
+  - status
+- RecoveryPlans
+  - id (PK)
+  - student_id (FK)
+  - course_code (FK)
+  - task
+  - deadline
+  - status
+
