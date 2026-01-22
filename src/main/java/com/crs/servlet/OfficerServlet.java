@@ -32,7 +32,8 @@ public class OfficerServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null || path.equals("/")) {
-                request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
+            response.setContentType("text/html");
+            response.getWriter().write("<!DOCTYPE html><html><body><h1>Officer Dashboard Test</h1></body></html>");
             return;
         }
 
@@ -50,7 +51,8 @@ public class OfficerServlet extends HttpServlet {
                 handleListStudents(request, response);
                 break;
             default:
-            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
+                response.setContentType("text/html");
+                response.getWriter().write("<!DOCTYPE html><html><body><h1>Officer Dashboard Test</h1></body></html>");
         }
     }
 
