@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/admindash/*")
+@WebServlet("/admin/*")
 public class AdminServlet extends HttpServlet {
 
     // Direct instantiation to avoid CDI issues
@@ -60,7 +60,7 @@ public class AdminServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null) {
-                response.sendRedirect(request.getContextPath() + "/admindash/");
+                response.sendRedirect(request.getContextPath() + "/admin/");
             return;
         }
 
@@ -75,19 +75,47 @@ public class AdminServlet extends HttpServlet {
                 handleDeleteUser(request, response);
                 break;
             default:
-            response.sendRedirect(request.getContextPath() + "/admindash/");
+            response.sendRedirect(request.getContextPath() + "/admin/");
         }
     }
 
     private void showDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Return HTML directly - no JSP forwarding
+        // Return HTML directly - consistent with officer dashboard structure
         response.setContentType("text/html");
-        String html = "<!DOCTYPE html><html><head><title>Admin Dashboard</title></head><body>" +
-                     "<h1>Admin Dashboard</h1>" +
-                     "<p>Welcome Admin!</p>" +
-                     "<p><a href='" + request.getContextPath() + "/admindash/users'>Manage Users</a></p>" +
-                     "<p><a href='" + request.getContextPath() + "/auth/logout'>Logout</a></p>" +
-                     "</body></html>";
+        String contextPath = request.getContextPath();
+        String html = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+                      "<title>Admin Dashboard - Course Recovery System</title>" +
+                      "<link rel='stylesheet' href='" + contextPath + "/css/style.css'>" +
+                      "</head><body>" +
+                      "<div class='container'>" +
+                      "<header>" +
+                      "<h1>Course Recovery System</h1>" +
+                      "<nav>" +
+                      "<a href='" + contextPath + "/admin/' class='active'>Dashboard</a>" +
+                      "<a href='" + contextPath + "/admin/users'>Manage Users</a>" +
+                      "<a href='" + contextPath + "/auth/logout'>Logout</a>" +
+                      "</nav>" +
+                      "</header>" +
+                      "<main>" +
+                      "<h2>Admin Dashboard</h2>" +
+                      "<p>Welcome, Admin!</p>" +
+                      "<div class='dashboard'>" +
+                      "<div class='cards'>" +
+                      "<div class='card'>" +
+                      "<h3>Manage Users</h3>" +
+                      "<p>Manage system users, roles, and permissions.</p>" +
+                      "<a href='" + contextPath + "/admin/users' class='btn btn-primary'>Manage Users</a>" +
+                      "</div>" +
+                      "<div class='card'>" +
+                      "<h3>System Status</h3>" +
+                      "<p>View system health and statistics.</p>" +
+                      "<p style='color: #7f8c8d; font-style: italic;'>Coming Soon</p>" +
+                      "</div>" +
+                      "</div>" +
+                      "</div>" +
+                      "</main>" +
+                      "</div>" +
+                      "</body></html>";
         response.getWriter().write(html);
     }
 
@@ -110,7 +138,7 @@ public class AdminServlet extends HttpServlet {
                     .append("</tr>");
             }
             html.append("</table>");
-            html.append("<p><a href='" + request.getContextPath() + "/admindash/'>Back to Dashboard</a></p>");
+            html.append("<p><a href='" + request.getContextPath() + "/admin/'>Back to Dashboard</a></p>");
             html.append("</body></html>");
             response.getWriter().write(html.toString());
         } catch (Exception e) {
@@ -142,7 +170,7 @@ public class AdminServlet extends HttpServlet {
             user.setStatus(status);
 
             UserDAO.addUser(user);
-            response.sendRedirect(request.getContextPath() + "/admindash/users");
+            response.sendRedirect(request.getContextPath() + "/admin/users");
         } catch (Exception e) {
             request.setAttribute("error", "Failed to add user: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
@@ -170,7 +198,7 @@ public class AdminServlet extends HttpServlet {
 
                 UserDAO.updateUser(user);
             }
-            response.sendRedirect(request.getContextPath() + "/admindash/users");
+            response.sendRedirect(request.getContextPath() + "/admin/users");
         } catch (Exception e) {
             request.setAttribute("error", "Failed to update user: " + e.getMessage());
             handleListUsers(request, response);
@@ -182,7 +210,7 @@ public class AdminServlet extends HttpServlet {
 
         try {
             UserDAO.deleteUser(userId);
-            response.sendRedirect(request.getContextPath() + "/admindash/users");
+            response.sendRedirect(request.getContextPath() + "/admin/users");
         } catch (Exception e) {
             request.setAttribute("error", "Failed to delete user: " + e.getMessage());
             handleListUsers(request, response);

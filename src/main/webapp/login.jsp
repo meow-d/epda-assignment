@@ -12,10 +12,6 @@
     <div class="login-container">
         <div class="login-box">
             <h1>Course Recovery System</h1>
-            <h2>Login</h2>
-            <c:if test="${not empty param.error}">
-                <div class="error-message">Invalid username or password</div>
-            </c:if>
             <c:if test="${not empty param.error}">
                 <div class="error-message">Invalid username or password</div>
             </c:if>

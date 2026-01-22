@@ -99,7 +99,7 @@ public class AuthServlet extends HttpServlet {
     private String getRedirectPage(String role) {
         switch (role) {
             case "admin":
-                return "/admindash/";
+                return "/admin/";
             case "officer":
                 return "/officer/";
             default:
