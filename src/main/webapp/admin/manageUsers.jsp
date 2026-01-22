@@ -13,7 +13,7 @@
         <header>
             <h1>Course Recovery System</h1>
             <nav>
-                <a href="${pageContext.request.contextPath}/admin/dashboard">Dashboard</a>
+                <a href="${pageContext.request.contextPath}/admin/">Dashboard</a>
                 <a href="${pageContext.request.contextPath}/admin/add-user" class="btn btn-primary">Add User</a>
                 <a href="${pageContext.request.contextPath}/auth/logout">Logout</a>
             </nav>

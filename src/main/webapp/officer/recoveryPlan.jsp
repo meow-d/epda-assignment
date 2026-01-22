@@ -13,7 +13,7 @@
         <header>
             <h1>Course Recovery System</h1>
             <nav>
-                <a href="${pageContext.request.contextPath}/officer/dashboard">Dashboard</a>
+                <a href="${pageContext.request.contextPath}/officer/">Dashboard</a>
                 <a href="${pageContext.request.contextPath}/officer/eligibility">Eligibility</a>
                 <a href="${pageContext.request.contextPath}/officer/academic-report">Academic Report</a>
                 <a href="${pageContext.request.contextPath}/auth/logout">Logout</a>
