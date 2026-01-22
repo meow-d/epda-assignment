@@ -188,7 +188,7 @@ public class OfficerServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/recovery-plan?studentId=" + studentId);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to add recovery plan: " + e.getMessage());
-            handleRecoveryPlan(request, response);
+            // handleRecoveryPlan(request, response);
         }
     }
 

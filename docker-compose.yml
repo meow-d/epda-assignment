@@ -36,8 +36,7 @@ services:
       DB_USER: crs_user
       DB_PASSWORD: crs_password
     volumes:
-      - ./target/course-recovery-system.war:/usr/local/tomee/webapps/ROOT.war:Z
-    command: bash -c "rm -rf /usr/local/tomee/webapps/ROOT && catalina.sh run"
+      - ./target/course-recovery-system:/usr/local/tomee/webapps/ROOT:Z
     depends_on:
       mysql:
         condition: service_healthy
