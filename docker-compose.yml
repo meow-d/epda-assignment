@@ -31,7 +31,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      JAVA_OPTS: "-Xmx512m -Djava.security.egd=file:/dev/./urandom"
+      JAVA_OPTS: "-Xmx512m -Djava.security.egd=file:/dev/./urandom -Dtomee.deployDir=/usr/local/tomee/webapps/ROOT -Dtomee.deployMode=exploded"
       DB_URL: "jdbc:mysql://mysql:3306/crs_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
       DB_USER: crs_user
       DB_PASSWORD: crs_password

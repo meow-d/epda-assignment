@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 
@@ -21,6 +22,13 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Authentication and authorization check
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("role") == null || !"admin".equals(session.getAttribute("role"))) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
         String path = request.getPathInfo();
 
         if (path == null || path.equals("/")) {
@@ -42,6 +50,13 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // Authentication and authorization check
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("role") == null || !"admin".equals(session.getAttribute("role"))) {
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+
         String path = request.getPathInfo();
 
         if (path == null) {
