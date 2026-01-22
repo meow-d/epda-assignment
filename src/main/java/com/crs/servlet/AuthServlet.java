@@ -102,7 +102,7 @@ public class AuthServlet extends HttpServlet {
             case "admin":
                 return "/admindash/";
             case "officer":
-                return "/officer/dashboard.jsp";
+                return "/officer/";
             default:
                 return "/login.jsp";
         }

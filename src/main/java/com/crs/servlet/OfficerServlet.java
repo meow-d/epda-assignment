@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/officer/*")
+@WebServlet("/WEB-INF/officer/*")
 public class OfficerServlet extends HttpServlet {
 
     @Override
@@ -25,9 +25,7 @@ public class OfficerServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null || path.equals("/")) {
-            // Temporary: return simple HTML instead of JSP to test
-            response.setContentType("text/html");
-            response.getWriter().write("<html><body><h1>Officer Dashboard</h1><p>Welcome!</p></body></html>");
+            request.getRequestDispatcher("/WEB-INF/WEB-INF/officer/dashboard.jsp").forward(request, response);
             return;
         }
 
@@ -45,7 +43,7 @@ public class OfficerServlet extends HttpServlet {
                 handleListStudents(request, response);
                 break;
             default:
-                request.getRequestDispatcher("/officer/dashboard.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/WEB-INF/officer/dashboard.jsp").forward(request, response);
         }
     }
 
@@ -54,7 +52,7 @@ public class OfficerServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null) {
-            response.sendRedirect(request.getContextPath() + "/officer/dashboard.jsp");
+            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/dashboard.jsp");
             return;
         }
 
@@ -72,7 +70,7 @@ public class OfficerServlet extends HttpServlet {
                 handleSendReport(request, response);
                 break;
             default:
-                response.sendRedirect(request.getContextPath() + "/officer/dashboard.jsp");
+                response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/dashboard.jsp");
         }
     }
 
@@ -94,10 +92,10 @@ public class OfficerServlet extends HttpServlet {
             List<Student> students = StudentDAO.getAllStudents();
             request.setAttribute("students", students);
 
-            request.getRequestDispatcher("/officer/recoveryPlan.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/recoveryPlan.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load recovery plan: " + e.getMessage());
-            request.getRequestDispatcher("/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
         }
     }
 
@@ -121,10 +119,10 @@ public class OfficerServlet extends HttpServlet {
             }
 
             request.setAttribute("eligibilityList", eligibilityList);
-            request.getRequestDispatcher("/officer/eligibility.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/eligibility.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load eligibility information: " + e.getMessage());
-            request.getRequestDispatcher("/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
         }
     }
 
@@ -146,10 +144,10 @@ public class OfficerServlet extends HttpServlet {
             List<Student> students = StudentDAO.getAllStudents();
             request.setAttribute("students", students);
 
-            request.getRequestDispatcher("/officer/academicReport.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/academicReport.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load academic report: " + e.getMessage());
-            request.getRequestDispatcher("/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
         }
     }
 
@@ -157,10 +155,10 @@ public class OfficerServlet extends HttpServlet {
         try {
             List<Student> students = StudentDAO.getAllStudents();
             request.setAttribute("students", students);
-            request.getRequestDispatcher("/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load students: " + e.getMessage());
-            request.getRequestDispatcher("/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
         }
     }
 
@@ -187,7 +185,7 @@ public class OfficerServlet extends HttpServlet {
             recoveryPlan.setStatus("active");
 
             RecoveryDAO.addRecoveryPlan(recoveryPlan);
-            response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + studentId);
+            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/recovery-plan?studentId=" + studentId);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to add recovery plan: " + e.getMessage());
             handleRecoveryPlan(request, response);
@@ -204,7 +202,7 @@ public class OfficerServlet extends HttpServlet {
                 recoveryPlan.setStatus(status);
                 RecoveryDAO.updateRecoveryPlan(recoveryPlan);
             }
-            response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + recoveryPlan.getStudentId());
+            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/recovery-plan?studentId=" + recoveryPlan.getStudentId());
         } catch (Exception e) {
             request.setAttribute("error", "Failed to update recovery plan: " + e.getMessage());
             handleRecoveryPlan(request, response);
@@ -217,7 +215,7 @@ public class OfficerServlet extends HttpServlet {
 
         try {
             RecoveryDAO.deleteRecoveryPlan(recoveryPlanId);
-            response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + studentId);
+            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/recovery-plan?studentId=" + studentId);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to delete recovery plan: " + e.getMessage());
             handleRecoveryPlan(request, response);
