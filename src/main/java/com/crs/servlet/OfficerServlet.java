@@ -25,7 +25,9 @@ public class OfficerServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null || path.equals("/")) {
-            request.getRequestDispatcher("/officer/dashboard.jsp").forward(request, response);
+            // Temporary: return simple HTML instead of JSP to test
+            response.setContentType("text/html");
+            response.getWriter().write("<html><body><h1>Officer Dashboard</h1><p>Welcome!</p></body></html>");
             return;
         }
 

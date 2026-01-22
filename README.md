@@ -3,7 +3,6 @@
 A Java EE web application for managing course recovery plans in educational institutions.
 
 ## Technologies
-
 - **Java:** JDK 17+
 - **Application Server:** Apache TomEE 9.x (Jakarta EE 9)
 - **Database:** MySQL 8.0
@@ -11,46 +10,37 @@ A Java EE web application for managing course recovery plans in educational inst
 - **Presentation Layer:** JSP, Servlets, JSTL
 - **Business Layer:** EJBs
 - **Data Access:** JDBC with DAO pattern
-- **Containerization:** Podman (Docker-compatible)
+- **Containerization:** Docker or Podman
 
 ## Prerequisites
-
 - JDK 17 or higher
 - Maven 3.8 or higher
-- Podman (or Docker) for containerized deployment
-- MySQL client (optional, for direct database access)
+- For containerized deployment:
+  - Docker or Podman
+- For manual deployment:
+  - MySQL
+  - TomEE
 
-## Quick Start
-
-### 1. Clone and Configure
-
+## deployment
+### deploy with podman
+to start:
 ```bash
-# Copy environment template and configure
-cp .env.template .env
-
-# Edit .env with your credentials:
-# - Database URL, user, password
-# - SMTP email settings
+mvn package && podman-compose up -d
+# application should now be accessible in http://localhost:8080/
 ```
 
-### 2. Build Application
-
+to restart:
 ```bash
-# Compile and package WAR file
-mvn clean package
-
-# Output: target/course-recovery-system.war
+mvn package && podman-compose restart tomee
 ```
 
-### 3. Run with Podman (Recommended)
-
+to view logs:
 ```bash
-# Start MySQL and TomEE containers
-podman-compose up -d
-
-# View logs
 podman-compose logs -f
+```
 
+to stop:
+```bash
 # Stop containers
 podman-compose down
 
@@ -58,23 +48,7 @@ podman-compose down
 podman-compose down -v
 ```
 
-**Access the application:** http://localhost:8080/course-recovery-system/
-
-### 4. Run with Docker (Alternative)
-
-```bash
-# Start MySQL and TomEE containers
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop containers
-docker-compose down
-```
-
-### 5. Manual Deployment (Local TomEE)
-
+### manual deployment
 ```bash
 # 1. Start MySQL
 mysql -u root -p < Database_Scripts/schema.sql
@@ -93,6 +67,34 @@ $TOMEE_HOME/bin/startup.sh
 
 # Access at: http://localhost:8080/course-recovery-system/
 ```
+
+## Troubleshooting
+### MySQL Connection Issues
+```bash
+# Check if MySQL is running
+podman ps | grep mysql
+
+# Check MySQL logs
+podman logs crs-mysql
+
+# Access MySQL directly
+mysql -h localhost -P 3306 -u crs_user -p crs_db
+```
+
+### TomEE Deployment Issues
+```bash
+# Check if TomEE is running
+podman ps | grep tomee
+
+# Check TomEE logs
+podman logs crs-tomee
+
+# Verify WAR file exists
+ls -lh target/course-recovery-system.war
+```
+
+### Email Issues
+Email functionality requires valid SMTP credentials in enviroment variables.
 
 ## Default Credentials
 
@@ -173,101 +175,11 @@ Database_Scripts/                 # Database schema and sample data
 - Status update alerts
 - Academic report delivery
 
-## Development
-
-### Compile Only
-
-```bash
-mvn compile
-```
-
-### Run Tests
-
-```bash
-mvn test
-```
-
-### Clean Build
-
-```bash
-mvn clean install
-```
-
-### Skip Tests
-
-```bash
-mvn clean package -DskipTests
-```
-
-## Troubleshooting
-
-### MySQL Connection Issues
-
-```bash
-# Check if MySQL is running
-podman ps | grep mysql
-
-# Check MySQL logs
-podman logs crs-mysql
-
-# Access MySQL directly
-mysql -h localhost -P 3306 -u crs_user -p crs_db
-```
-
-### TomEE Deployment Issues
-
-```bash
-# Check if TomEE is running
-podman ps | grep tomee
-
-# Check TomEE logs
-podman logs crs-tomee
-
-# Verify WAR file exists
-ls -lh target/course-recovery-system.war
-```
-
-### Port Conflicts
-
-If port 8080 is already in use, modify `docker-compose.yml`:
-
-```yaml
-tomee:
-  ports:
-    - "8081:8080"  # Use 8081 instead
-```
-
-Then access at: http://localhost:8081/
-
-### Email Issues
-
-Email functionality requires valid SMTP configuration in `.env`. For Gmail:
-1. Enable 2-factor authentication
-2. Generate an App Password
-3. Use App Password in `.env`, not regular password
-
 ## Testing
 
 See [`plans/testing.md`](plans/testing.md) for comprehensive test plan.
 
-### Quick Smoke Test
-
-```bash
-# 1. Start services
-podman-compose up -d
-
-# 2. Wait for services to be ready (~30 seconds)
-
-# 3. Test login
-curl -X POST http://localhost:8080/course-recovery-system/auth/login \
-  -d "username=admin&password=admin123"
-
-# 4. Open browser
-# Navigate to: http://localhost:8080/course-recovery-system/login.jsp
-```
-
 ## Database Schema
-
 ### Users
 - `id` (PK), `username`, `password`, `role`, `email`, `status`
 
@@ -282,14 +194,3 @@ curl -X POST http://localhost:8080/course-recovery-system/auth/login \
 
 ### RecoveryPlans
 - `id` (PK), `student_id` (FK), `course_code` (FK), `task`, `deadline`, `status`
-
-## References
-
-- [Jakarta EE Documentation](https://jakarta.ee/)
-- [TomEE Documentation](https://tomee.apache.org/)
-- [MySQL Documentation](https://dev.mysql.com/doc/)
-- [Maven Documentation](https://maven.apache.org/guides/)
-
-## License
-
-Educational project for EPDA assignment.

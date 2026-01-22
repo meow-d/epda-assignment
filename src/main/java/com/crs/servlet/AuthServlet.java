@@ -100,7 +100,7 @@ public class AuthServlet extends HttpServlet {
     private String getRedirectPage(String role) {
         switch (role) {
             case "admin":
-                return "/admin/dashboard.jsp";
+                return "/admindash/";
             case "officer":
                 return "/officer/dashboard.jsp";
             default:

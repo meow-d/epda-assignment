@@ -5,16 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Error - Course Recovery System</title>
-    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="error-page">
-            <h1>Error</h1>
-            <p>An error has occurred.</p>
-            <p class="error-message">${pageContext.exception}</p>
-            <a href="${pageContext.request.contextPath}/login.jsp" class="btn btn-primary">Return to Login</a>
-        </div>
+    <div style="padding: 20px;">
+        <h1>Error - Course Recovery System</h1>
+        <p>An error has occurred.</p>
+        <p>Please contact the administrator.</p>
+        <a href="<%= request.getContextPath() %>/login.jsp">Return to Login</a>
     </div>
 </body>
 </html>

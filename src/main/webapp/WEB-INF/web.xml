@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
-         version="6.0">
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+          version="5.0">
 
     <display-name>Course Recovery System</display-name>
     <description>Course Recovery System for educational institutions</description>
@@ -35,6 +35,31 @@
         <error-code>500</error-code>
         <location>/error.jsp</location>
     </error-page>
+
+    <!-- JSF-CDI Integration Parameters -->
+    <context-param>
+        <param-name>jakarta.faces.INTERPRET_EMPTY_STRING_SUBMITTED_VALUES_AS_NULL</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>jakarta.faces.DATETIMECONVERTER_DEFAULT_TIMEZONE_IS_SYSTEM_TIMEZONE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <!-- CRITICAL: Prevent JSF from processing servlet requests -->
+    <context-param>
+        <param-name>org.apache.myfaces.SKIP_JSF_FOR_REQUESTS</param-name>
+        <param-value>/admin/*,/officer/*,/auth/*</param-value>
+    </context-param>
+
+    <!-- Ensure JSF uses CDI for bean resolution -->
+    <context-param>
+        <param-name>org.apache.myfaces.CDI_MANAGED_BEANS_ENABLED</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+
 
     <!-- Temporarily disabled security constraints for testing
     <security-constraint>
