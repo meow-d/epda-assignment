@@ -15,7 +15,8 @@
             <nav>
                 <a href="${pageContext.request.contextPath}/officer/">Dashboard</a>
                 <a href="${pageContext.request.contextPath}/officer/recovery-plan">Recovery Plans</a>
-                <a href="${pageContext.request.contextPath}/officer/eligibility">Eligibility</a>
+                <a href="${pageContext.request.contextPath}/officer/eligibility">Eligibility Check</a>
+                <a href="${pageContext.request.contextPath}/officer/academic-report" class="active">Academic Report</a>
                 <a href="${pageContext.request.contextPath}/auth/logout">Logout</a>
             </nav>
         </header>

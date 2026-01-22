@@ -44,7 +44,8 @@ header nav a {
     transition: background-color 0.3s;
 }
 
-header nav a:hover {
+header nav a:hover,
+header nav a.active {
     background-color: #34495e;
 }
 
