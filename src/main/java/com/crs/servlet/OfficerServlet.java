@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet("/WEB-INF/officer/*")
+@WebServlet("/officer/*")
 public class OfficerServlet extends HttpServlet {
 
     @Override
@@ -32,7 +32,7 @@ public class OfficerServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null || path.equals("/")) {
-            request.getRequestDispatcher("/WEB-INF/WEB-INF/officer/index.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
             return;
         }
 
@@ -50,7 +50,7 @@ public class OfficerServlet extends HttpServlet {
                 handleListStudents(request, response);
                 break;
             default:
-                request.getRequestDispatcher("/WEB-INF/WEB-INF/officer/index.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         }
     }
 
