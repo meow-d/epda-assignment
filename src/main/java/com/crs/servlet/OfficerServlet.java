@@ -24,7 +24,8 @@ public class OfficerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Authentication and authorization check
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("role") == null || !"officer".equals(session.getAttribute("role"))) {
+        if (session == null || session.getAttribute("role") == null ||
+            (!"officer".equals(session.getAttribute("role")) && !"admin".equals(session.getAttribute("role")))) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
@@ -58,7 +59,8 @@ public class OfficerServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Authentication and authorization check
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("role") == null || !"officer".equals(session.getAttribute("role"))) {
+        if (session == null || session.getAttribute("role") == null ||
+            (!"officer".equals(session.getAttribute("role")) && !"admin".equals(session.getAttribute("role")))) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }

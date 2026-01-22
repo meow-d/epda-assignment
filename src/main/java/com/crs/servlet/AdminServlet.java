@@ -92,6 +92,9 @@ public class AdminServlet extends HttpServlet {
                       "<h1>Course Recovery System</h1>" +
                       "<nav>" +
                       "<a href='" + contextPath + "/admin/' class='active'>Dashboard</a>" +
+                      "<a href='" + contextPath + "/officer/recovery-plan'>Recovery Plans</a>" +
+                      "<a href='" + contextPath + "/officer/eligibility'>Eligibility Check</a>" +
+                      "<a href='" + contextPath + "/officer/academic-report'>Academic Report</a>" +
                       "<a href='" + contextPath + "/admin/users'>Manage Users</a>" +
                       "<a href='" + contextPath + "/auth/logout'>Logout</a>" +
                       "</nav>" +
@@ -102,14 +105,24 @@ public class AdminServlet extends HttpServlet {
                       "<div class='dashboard'>" +
                       "<div class='cards'>" +
                       "<div class='card'>" +
+                      "<h3>Recovery Plans</h3>" +
+                      "<p>Manage student recovery plans and track progress.</p>" +
+                      "<a href='" + contextPath + "/officer/recovery-plan' class='btn btn-primary'>View Recovery Plans</a>" +
+                      "</div>" +
+                      "<div class='card'>" +
+                      "<h3>Eligibility Check</h3>" +
+                      "<p>Check student eligibility for course recovery.</p>" +
+                      "<a href='" + contextPath + "/officer/eligibility' class='btn btn-primary'>Check Eligibility</a>" +
+                      "</div>" +
+                      "<div class='card'>" +
+                      "<h3>Academic Reports</h3>" +
+                      "<p>Generate and send academic performance reports.</p>" +
+                      "<a href='" + contextPath + "/officer/academic-report' class='btn btn-primary'>View Reports</a>" +
+                      "</div>" +
+                      "<div class='card'>" +
                       "<h3>Manage Users</h3>" +
                       "<p>Manage system users, roles, and permissions.</p>" +
                       "<a href='" + contextPath + "/admin/users' class='btn btn-primary'>Manage Users</a>" +
-                      "</div>" +
-                      "<div class='card'>" +
-                      "<h3>System Status</h3>" +
-                      "<p>View system health and statistics.</p>" +
-                      "<p style='color: #7f8c8d; font-style: italic;'>Coming Soon</p>" +
                       "</div>" +
                       "</div>" +
                       "</div>" +
