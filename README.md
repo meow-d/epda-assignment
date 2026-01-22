@@ -58,7 +58,7 @@ podman-compose down
 podman-compose down -v
 ```
 
-**Access the application:** http://localhost:8080/
+**Access the application:** http://localhost:8080/course-recovery-system/
 
 ### 4. Run with Docker (Alternative)
 
@@ -80,8 +80,10 @@ docker-compose down
 mysql -u root -p < Database_Scripts/schema.sql
 mysql -u root -p crs_db < Database_Scripts/data.sql
 
-# 2. Configure database connection in .env
-# Set db.url to: jdbc:mysql://localhost:3306/crs_db?useSSL=false&serverTimezone=UTC
+# 2. Configure environment variables:
+export DB_URL="jdbc:mysql://localhost:3306/crs_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+export DB_USER="root"
+export DB_PASSWORD="rootpassword"
 
 # 3. Deploy WAR to TomEE
 cp target/course-recovery-system.war $TOMEE_HOME/webapps/
@@ -137,20 +139,20 @@ Database_Scripts/                 # Database schema and sample data
 ## Architecture
 
 ```
-┌─────────────────────────────────────┐
-│     Presentation Tier             │
+┌───────────────────────────────┐
+│     Presentation Tier         │
 │  (JSP, Servlets, JSTL)        │
-└──────────────┬──────────────────┘
+└──────────────┬────────────────┘
                │
-┌──────────────▼──────────────────┐
-│      Business Tier               │
-│         (EJBs)                   │
-└──────────────┬──────────────────┘
+┌──────────────▼────────────────┐
+│      Business Tier            │
+│         (EJBs)                │
+└──────────────┬────────────────┘
                │
-┌──────────────▼──────────────────┐
-│     Database Tier               │
-│       (MySQL 8.0)                │
-└─────────────────────────────────────┘
+┌──────────────▼────────────────┐
+│     Database Tier             │
+│       (MySQL 8.0)             │
+└───────────────────────────────┘
 ```
 
 ## Features
