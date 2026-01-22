@@ -80,8 +80,7 @@ public class AuthServlet extends HttpServlet {
                 String redirectPage = getRedirectPage(user.getRole());
                 response.sendRedirect(request.getContextPath() + redirectPage);
             } else {
-                request.setAttribute("error", "Invalid username or password");
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/login.jsp?error=true");
             }
         } catch (Exception e) {
             request.setAttribute("error", "Login failed: " + e.getMessage());

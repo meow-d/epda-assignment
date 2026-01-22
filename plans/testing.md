@@ -72,8 +72,6 @@ Based on assignment functional requirements, this plan covers:
   - Expected Result: Access denied or redirect to appropriate dashboard
   - Actual result:
 
----
-
 ### 2. User Management
 
 - TC-006
@@ -124,8 +122,6 @@ Based on assignment functional requirements, this plan covers:
     3. Try adding user with invalid email
   - Expected Result: Appropriate error messages for each case
   - Actual result:
-
----
 
 ### 3. Course Recovery Plan
 
@@ -196,8 +192,6 @@ Based on assignment functional requirements, this plan covers:
   - Expected Result: Email sent to student with recovery plan details
   - Actual result:
 
----
-
 ### 4. Eligibility Check and Enrollment
 
 - TC-016
@@ -252,8 +246,6 @@ Based on assignment functional requirements, this plan covers:
   - Expected Result: CGPA ≈ 3.11
   - Actual result:
 
----
-
 ### 5. Academic Performance Reporting
 
 - TC-021
@@ -296,8 +288,6 @@ Based on assignment functional requirements, this plan covers:
   - Expected Result: Shows student info with CGPA: 0.00, message "No grades found"
   - Actual result:
 
----
-
 ### 6. Error Handling
 
 - TC-025
@@ -330,8 +320,6 @@ Based on assignment functional requirements, this plan covers:
   - Expected Result: Validation errors prevent submission
   - Actual result:
 
----
-
 ## Test Data Reference
 
 ### Default Users
@@ -357,10 +345,7 @@ Based on assignment functional requirements, this plan covers:
 - **Failed courses ≤ 3**
 - Both must be met for eligibility
 
----
-
 ## Test Execution Checklist
-
 - [ ] All authentication tests (TC-001 to TC-005)
 - [ ] All user management tests (TC-006 to TC-009)
 - [ ] All recovery plan tests (TC-010 to TC-015)
@@ -368,17 +353,13 @@ Based on assignment functional requirements, this plan covers:
 - [ ] All academic report tests (TC-021 to TC-024)
 - [ ] All error handling tests (TC-025 to TC-027)
 
----
-
 ## Known Limitations
-
 1. Email functionality requires valid SMTP configuration (may need to skip email-related tests if not configured)
 2. Session timeout set to 30 minutes
 3. Passwords stored in plain text (for demonstration only - production would use hashing)
 4. Course Retrieval Policy (3 attempts) not fully enforced in current implementation
 
 ## Success Criteria
-
 - All critical priority tests pass
 - At least 80% of high priority tests pass
 - No unhandled exceptions thrown
