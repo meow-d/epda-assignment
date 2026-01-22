@@ -27,7 +27,7 @@ Based on assignment functional requirements, this plan covers:
   1. Navigate to login page
   2. Enter username: `admin`, password: `admin123`
   3. Click Login button
-- **Expected Result:** Redirected to `/admin/index.jsp`
+- **Expected Result:** Redirected to `/admindash/`
 - **Priority:** Critical
 
 #### TC-002: Officer Login
@@ -36,7 +36,7 @@ Based on assignment functional requirements, this plan covers:
   1. Navigate to login page
   2. Enter username: `officer1`, password: `officer123`
   3. Click Login button
-- **Expected Result:** Redirected to `/officer/index.jsp`
+- **Expected Result:** Redirected to `/officer/`
 - **Priority:** Critical
 
 #### TC-003: Invalid Login
@@ -60,9 +60,9 @@ Based on assignment functional requirements, this plan covers:
 - **Description:** Verify users can only access pages for their role
 - **Steps:**
   1. Login as admin
-  2. Try accessing `/officer/index.jsp` directly
-  3. Logout and login as officer
-  4. Try accessing `/admin/index.jsp` directly
+   2. Try accessing `/officer/` directly
+   3. Logout and login as officer
+   4. Try accessing `/admindash/` directly
 - **Expected Result:** Access denied or redirect to appropriate dashboard
 - **Priority:** Critical
 

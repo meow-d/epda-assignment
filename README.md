@@ -25,16 +25,19 @@ A Java EE web application for managing course recovery plans in educational inst
 ### deploy with podman
 to start:
 ```bash
-mvn package && podman-compose up -d
+mvn clean package && podman-compose up -d --force-recreate
 # application should now be accessible in http://localhost:8080/
 ```
 
 to restart:
 ```bash
 mvn package && podman-compose restart tomee
+# use mvn clean package if there are weird issues
+# restarting tomee shouldn't be needed to reload, but for some reason it doesn't
+# unfortunately restarting tomee logs you out too
 ```
 
-to view logs:
+to view stdout logs:
 ```bash
 podman-compose logs -f
 ```
