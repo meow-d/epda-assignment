@@ -41,7 +41,7 @@ public class AdminServlet extends HttpServlet {
                 handleListUsers(request, response);
                 break;
             case "/add-user":
-                request.getRequestDispatcher("/admin/addUser.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
                 break;
             default:
                 showDashboard(request, response);
@@ -60,7 +60,7 @@ public class AdminServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null) {
-            response.sendRedirect(request.getContextPath() + "/admindash/index.jsp");
+                response.sendRedirect(request.getContextPath() + "/admindash/");
             return;
         }
 
@@ -75,7 +75,7 @@ public class AdminServlet extends HttpServlet {
                 handleDeleteUser(request, response);
                 break;
             default:
-                response.sendRedirect(request.getContextPath() + "/admindash/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/admindash/");
         }
     }
 
@@ -129,7 +129,7 @@ public class AdminServlet extends HttpServlet {
         if (username == null || password == null || role == null || email == null ||
             username.isEmpty() || password.isEmpty() || role.isEmpty() || email.isEmpty()) {
             request.setAttribute("error", "All fields are required");
-            request.getRequestDispatcher("/admin/addUser.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
             return;
         }
 
@@ -142,10 +142,10 @@ public class AdminServlet extends HttpServlet {
             user.setStatus(status);
 
             UserDAO.addUser(user);
-            response.sendRedirect(request.getContextPath() + "/admin/users");
+            response.sendRedirect(request.getContextPath() + "/admindash/users");
         } catch (Exception e) {
             request.setAttribute("error", "Failed to add user: " + e.getMessage());
-            request.getRequestDispatcher("/admin/addUser.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
         }
     }
 
@@ -170,7 +170,7 @@ public class AdminServlet extends HttpServlet {
 
                 UserDAO.updateUser(user);
             }
-            response.sendRedirect(request.getContextPath() + "/admin/users");
+            response.sendRedirect(request.getContextPath() + "/admindash/users");
         } catch (Exception e) {
             request.setAttribute("error", "Failed to update user: " + e.getMessage());
             handleListUsers(request, response);
@@ -182,7 +182,7 @@ public class AdminServlet extends HttpServlet {
 
         try {
             UserDAO.deleteUser(userId);
-            response.sendRedirect(request.getContextPath() + "/admin/users");
+            response.sendRedirect(request.getContextPath() + "/admindash/users");
         } catch (Exception e) {
             request.setAttribute("error", "Failed to delete user: " + e.getMessage());
             handleListUsers(request, response);
