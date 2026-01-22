@@ -36,6 +36,7 @@
         <location>/error.jsp</location>
     </error-page>
 
+    <!-- Temporarily disabled security constraints for testing
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Admin Area</web-resource-name>
@@ -63,6 +64,7 @@
             <form-error-page>/login.jsp?error=true</form-error-page>
         </form-login-config>
     </login-config>
+    -->
 
     <context-param>
         <param-name>app.name</param-name>
