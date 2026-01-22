@@ -25,7 +25,7 @@ Based on assignment functional requirements, this plan covers:
     1. Navigate to login page
     2. Enter username: `admin`, password: `admin123`
     3. Click Login button
-  - Expected Result: Redirected to `/admindash/`
+  - Expected Result: Redirected to `/admin/`
   - Actual result:
 
 - TC-002
@@ -68,7 +68,7 @@ Based on assignment functional requirements, this plan covers:
     1. Login as admin
     2. Try accessing `/officer/` directly
     3. Logout and login as officer
-    4. Try accessing `/admindash/` directly
+    4. Try accessing `/admin/` directly
   - Expected Result: Access denied or redirect to appropriate dashboard
   - Actual result:
 
