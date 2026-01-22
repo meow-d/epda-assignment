@@ -45,7 +45,7 @@ public class AdminServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null) {
-            response.sendRedirect(request.getContextPath() + "/admindash/dashboard.jsp");
+            response.sendRedirect(request.getContextPath() + "/admindash/index.jsp");
             return;
         }
 
@@ -60,7 +60,7 @@ public class AdminServlet extends HttpServlet {
                 handleDeleteUser(request, response);
                 break;
             default:
-                response.sendRedirect(request.getContextPath() + "/admindash/dashboard.jsp");
+                response.sendRedirect(request.getContextPath() + "/admindash/index.jsp");
         }
     }
 

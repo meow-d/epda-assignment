@@ -39,10 +39,10 @@
       - style.css
     - login.jsp
     - admin
-      - dashboard.jsp
+      - index.jsp
       - manageUsers.jsp
     - officer
-      - dashboard.jsp
+      - index.jsp
       - recoveryPlan.jsp
       - eligibility.jsp
       - academicReport.jsp

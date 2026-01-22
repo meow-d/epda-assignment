@@ -25,7 +25,7 @@ public class OfficerServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null || path.equals("/")) {
-            request.getRequestDispatcher("/WEB-INF/WEB-INF/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/WEB-INF/officer/index.jsp").forward(request, response);
             return;
         }
 
@@ -43,7 +43,7 @@ public class OfficerServlet extends HttpServlet {
                 handleListStudents(request, response);
                 break;
             default:
-                request.getRequestDispatcher("/WEB-INF/WEB-INF/officer/dashboard.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/WEB-INF/officer/index.jsp").forward(request, response);
         }
     }
 
@@ -52,7 +52,7 @@ public class OfficerServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null) {
-            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/dashboard.jsp");
+            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/index.jsp");
             return;
         }
 
@@ -70,7 +70,7 @@ public class OfficerServlet extends HttpServlet {
                 handleSendReport(request, response);
                 break;
             default:
-                response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/dashboard.jsp");
+                response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/index.jsp");
         }
     }
 
@@ -95,7 +95,7 @@ public class OfficerServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/officer/recoveryPlan.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load recovery plan: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         }
     }
 
@@ -122,7 +122,7 @@ public class OfficerServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/officer/eligibility.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load eligibility information: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         }
     }
 
@@ -147,7 +147,7 @@ public class OfficerServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/officer/academicReport.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load academic report: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         }
     }
 
@@ -155,10 +155,10 @@ public class OfficerServlet extends HttpServlet {
         try {
             List<Student> students = StudentDAO.getAllStudents();
             request.setAttribute("students", students);
-            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load students: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/officer/dashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         }
     }
 
