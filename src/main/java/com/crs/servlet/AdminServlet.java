@@ -43,6 +43,9 @@ public class AdminServlet extends HttpServlet {
             case "/add-user":
                 request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
                 break;
+            case "/edit-user":
+                handleEditUserForm(request, response);
+                break;
             default:
                 showDashboard(request, response);
         }
@@ -226,6 +229,24 @@ public class AdminServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/admin/users");
         } catch (Exception e) {
             request.setAttribute("error", "Failed to delete user: " + e.getMessage());
+            handleListUsers(request, response);
+        }
+    }
+
+    private void handleEditUserForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int userId = Integer.parseInt(request.getParameter("id"));
+
+        try {
+            User user = UserDAO.getUserById(userId);
+            if (user != null) {
+                request.setAttribute("user", user);
+                request.getRequestDispatcher("/WEB-INF/admin/editUser.jsp").forward(request, response);
+            } else {
+                request.setAttribute("error", "User not found");
+                handleListUsers(request, response);
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Failed to load user: " + e.getMessage());
             handleListUsers(request, response);
         }
     }
