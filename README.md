@@ -1,4 +1,5 @@
 # Course Recovery System
+Note: 100% vibe coded.
 
 A Java EE web application for managing course recovery plans in educational institutions.
 
@@ -179,7 +180,6 @@ Database_Scripts/                 # Database schema and sample data
 - Academic report delivery
 
 ## Testing
-
 See [`plans/testing.md`](plans/testing.md) for comprehensive test plan.
 
 ## Database Schema
