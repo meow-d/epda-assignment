@@ -1,6 +1,7 @@
 package com.crs.servlet;
 
 import com.crs.dao.UserDAO;
+import com.crs.ejb.AnalyticsEJB;
 import com.crs.ejb.UserEJB;
 import com.crs.model.User;
 import com.crs.util.ValidationUtil;
@@ -20,6 +21,7 @@ public class AdminServlet extends HttpServlet {
 
     // Direct instantiation to avoid CDI issues
     private UserEJB userEJB = new UserEJB();
+    private AnalyticsEJB analyticsEJB = new AnalyticsEJB();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -84,18 +86,64 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void showDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Return HTML directly - consistent with officer dashboard structure
         response.setContentType("text/html");
         String contextPath = request.getContextPath();
+
+        // Get analytics data
+        String analyticsHtml = "";
+        try {
+            var analytics = analyticsEJB.getSystemAnalytics();
+
+            analyticsHtml = "<div class='analytics-section'>" +
+                           "<h3>System Analytics</h3>" +
+                           "<div class='analytics-grid'>" +
+                           "<div class='metric-card'>" +
+                           "<h4>Total Students</h4>" +
+                           "<div class='metric-value'>" + analytics.get("totalStudents") + "</div>" +
+                           "</div>" +
+                           "<div class='metric-card'>" +
+                           "<h4>Eligible Students</h4>" +
+                           "<div class='metric-value'>" + analytics.get("eligibleStudents") + "</div>" +
+                           "</div>" +
+                           "<div class='metric-card'>" +
+                           "<h4>Ineligible Students</h4>" +
+                           "<div class='metric-value'>" + analytics.get("ineligibleStudents") + "</div>" +
+                           "</div>" +
+                           "<div class='metric-card'>" +
+                           "<h4>Active Recovery Plans</h4>" +
+                           "<div class='metric-value'>" + analytics.get("activeRecoveryPlans") + "</div>" +
+                           "</div>" +
+                           "<div class='metric-card'>" +
+                           "<h4>Recovery Success Rate</h4>" +
+                           "<div class='metric-value'>" + String.format("%.1f%%", analytics.get("recoverySuccessRate")) + "</div>" +
+                           "</div>" +
+                           "<div class='metric-card'>" +
+                           "<h4>Total Failed Courses</h4>" +
+                           "<div class='metric-value'>" + analytics.get("totalFailedCourses") + "</div>" +
+                           "</div>" +
+                           "</div>" +
+                           "</div>";
+        } catch (Exception e) {
+            analyticsHtml = "<div class='error-message'>Unable to load analytics: " + e.getMessage() + "</div>";
+        }
+
         String html = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
                       "<title>Admin Dashboard - Course Recovery System</title>" +
                       "<link rel='stylesheet' href='" + contextPath + "/css/style.css'>" +
+                      "<style>" +
+                      ".analytics-section { margin: 2rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px; }" +
+                      ".analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }" +
+                      ".metric-card { background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }" +
+                      ".metric-card h4 { margin: 0 0 0.5rem 0; color: #666; font-size: 0.9rem; }" +
+                      ".metric-value { font-size: 2rem; font-weight: bold; color: #007bff; }" +
+                      "</style>" +
                       "</head><body>" +
                       "<div class='container'>" +
                       "<header>" +
                       "<h1>Course Recovery System</h1>" +
                       "<nav>" +
                       "<a href='" + contextPath + "/admin/' class='active'>Dashboard</a>" +
+                      "<a href='" + contextPath + "/admin/advanced-reports'>Advanced Reports</a>" +
                       "<a href='" + contextPath + "/officer/recovery-plan'>Recovery Plans</a>" +
                       "<a href='" + contextPath + "/officer/eligibility'>Eligibility Check</a>" +
                       "<a href='" + contextPath + "/officer/academic-report'>Academic Report</a>" +
@@ -105,7 +153,8 @@ public class AdminServlet extends HttpServlet {
                       "</header>" +
                       "<main>" +
                       "<h2>Admin Dashboard</h2>" +
-                      "<p>Welcome, Admin!</p>" +
+                      "<p>Welcome, Admin! Here's an overview of the system.</p>" +
+                      analyticsHtml +
                       "<div class='dashboard'>" +
                       "<div class='cards'>" +
                       "<div class='card'>" +
