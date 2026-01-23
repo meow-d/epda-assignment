@@ -2,6 +2,7 @@ package com.crs.servlet;
 
 import com.crs.ejb.UserEJB;
 import com.crs.model.User;
+import com.crs.util.ValidationUtil;
 
 import jakarta.ejb.EJB;
 import jakarta.servlet.ServletException;
@@ -67,8 +68,17 @@ public class AuthServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
-            request.setAttribute("error", "Username and password are required");
+        // Validate inputs
+        ValidationUtil.ValidationResult usernameValidation = ValidationUtil.validateRequired(username, "Username");
+        ValidationUtil.ValidationResult passwordValidation = ValidationUtil.validateRequired(password, "Password");
+
+        if (!usernameValidation.isValid()) {
+            request.setAttribute("error", usernameValidation.getErrorMessage());
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            return;
+        }
+        if (!passwordValidation.isValid()) {
+            request.setAttribute("error", passwordValidation.getErrorMessage());
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
@@ -105,14 +115,16 @@ public class AuthServlet extends HttpServlet {
     private void handleForgotPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String email = request.getParameter("email");
 
-        if (email == null || email.trim().isEmpty()) {
-            request.setAttribute("error", "Email address is required");
+        // Validate email
+        ValidationUtil.ValidationResult emailValidation = ValidationUtil.validateEmail(email);
+        if (!emailValidation.isValid()) {
+            request.setAttribute("error", emailValidation.getErrorMessage());
             request.getRequestDispatcher("/forgotPassword.jsp").forward(request, response);
             return;
         }
 
         try {
-            boolean success = userEJB.requestPasswordReset(email.trim());
+            boolean success = userEJB.requestPasswordReset(email.trim().toLowerCase());
             if (success) {
                 request.setAttribute("message", "If an account with that email exists, a password reset link has been sent.");
             } else {
@@ -131,24 +143,23 @@ public class AuthServlet extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        if (token == null || token.trim().isEmpty()) {
-            request.setAttribute("error", "Invalid reset token");
+        // Validate token
+        ValidationUtil.ValidationResult tokenValidation = ValidationUtil.validateRequired(token, "Reset token");
+        if (!tokenValidation.isValid()) {
+            request.setAttribute("error", tokenValidation.getErrorMessage());
             request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
             return;
         }
 
-        if (password == null || password.trim().isEmpty()) {
-            request.setAttribute("error", "Password is required");
+        // Validate password
+        ValidationUtil.ValidationResult passwordValidation = ValidationUtil.validatePassword(password);
+        if (!passwordValidation.isValid()) {
+            request.setAttribute("error", passwordValidation.getErrorMessage());
             request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
             return;
         }
 
-        if (password.length() < 6) {
-            request.setAttribute("error", "Password must be at least 6 characters long");
-            request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
-            return;
-        }
-
+        // Validate password confirmation
         if (!password.equals(confirmPassword)) {
             request.setAttribute("error", "Passwords do not match");
             request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);

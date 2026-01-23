@@ -3,6 +3,7 @@ package com.crs.servlet;
 import com.crs.dao.UserDAO;
 import com.crs.ejb.UserEJB;
 import com.crs.model.User;
+import com.crs.util.ValidationUtil;
 
 
 import jakarta.servlet.ServletException;
@@ -168,24 +169,52 @@ public class AdminServlet extends HttpServlet {
         String password = request.getParameter("password");
         String role = request.getParameter("role");
         String email = request.getParameter("email");
-        String status = "active";
+        String status = request.getParameter("status");
 
-        if (username == null || password == null || role == null || email == null ||
-            username.isEmpty() || password.isEmpty() || role.isEmpty() || email.isEmpty()) {
-            request.setAttribute("error", "All fields are required");
+        // Validate all inputs
+        ValidationUtil.ValidationResult usernameValidation = ValidationUtil.validateUsername(username);
+        ValidationUtil.ValidationResult passwordValidation = ValidationUtil.validatePassword(password);
+        ValidationUtil.ValidationResult emailValidation = ValidationUtil.validateEmail(email);
+        ValidationUtil.ValidationResult roleValidation = ValidationUtil.validateRole(role);
+        ValidationUtil.ValidationResult statusValidation = status != null ? ValidationUtil.validateStatus(status) :
+                                                         new ValidationUtil.ValidationResult(true, null);
+
+        // Check if any validation failed
+        if (!usernameValidation.isValid()) {
+            request.setAttribute("error", usernameValidation.getErrorMessage());
+            request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
+            return;
+        }
+        if (!passwordValidation.isValid()) {
+            request.setAttribute("error", passwordValidation.getErrorMessage());
+            request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
+            return;
+        }
+        if (!emailValidation.isValid()) {
+            request.setAttribute("error", emailValidation.getErrorMessage());
+            request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
+            return;
+        }
+        if (!roleValidation.isValid()) {
+            request.setAttribute("error", roleValidation.getErrorMessage());
+            request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
+            return;
+        }
+        if (!statusValidation.isValid()) {
+            request.setAttribute("error", statusValidation.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
             return;
         }
 
         try {
             User user = new User();
-            user.setUsername(username);
+            user.setUsername(username.trim());
             user.setPassword(password);
-            user.setRole(role);
-            user.setEmail(email);
-            user.setStatus(status);
+            user.setRole(role.trim().toLowerCase());
+            user.setEmail(email.trim().toLowerCase());
+            user.setStatus(status != null ? status.trim().toLowerCase() : "active");
 
-            UserDAO.addUser(user);
+            userEJB.addUser(user);
             response.sendRedirect(request.getContextPath() + "/admin/users");
         } catch (Exception e) {
             request.setAttribute("error", "Failed to add user: " + e.getMessage());
@@ -194,23 +223,79 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void handleUpdateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int userId = Integer.parseInt(request.getParameter("id"));
+        String userIdStr = request.getParameter("id");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String role = request.getParameter("role");
         String email = request.getParameter("email");
         String status = request.getParameter("status");
 
+        // Validate user ID
+        ValidationUtil.ValidationResult userIdValidation = ValidationUtil.validateRequired(userIdStr, "User ID");
+        if (!userIdValidation.isValid()) {
+            request.setAttribute("error", userIdValidation.getErrorMessage());
+            handleListUsers(request, response);
+            return;
+        }
+
+        int userId;
+        try {
+            userId = Integer.parseInt(userIdStr.trim());
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Invalid user ID");
+            handleListUsers(request, response);
+            return;
+        }
+
+        // Validate other inputs
+        ValidationUtil.ValidationResult usernameValidation = ValidationUtil.validateUsername(username);
+        ValidationUtil.ValidationResult emailValidation = ValidationUtil.validateEmail(email);
+        ValidationUtil.ValidationResult roleValidation = ValidationUtil.validateRole(role);
+        ValidationUtil.ValidationResult statusValidation = ValidationUtil.validateStatus(status);
+
+        // Password is optional for updates
+        ValidationUtil.ValidationResult passwordValidation = new ValidationUtil.ValidationResult(true, null);
+        if (password != null && !password.trim().isEmpty()) {
+            passwordValidation = ValidationUtil.validatePassword(password);
+        }
+
+        // Check if any validation failed
+        if (!usernameValidation.isValid()) {
+            request.setAttribute("error", usernameValidation.getErrorMessage());
+            handleListUsers(request, response);
+            return;
+        }
+        if (!emailValidation.isValid()) {
+            request.setAttribute("error", emailValidation.getErrorMessage());
+            handleListUsers(request, response);
+            return;
+        }
+        if (!roleValidation.isValid()) {
+            request.setAttribute("error", roleValidation.getErrorMessage());
+            handleListUsers(request, response);
+            return;
+        }
+        if (!statusValidation.isValid()) {
+            request.setAttribute("error", statusValidation.getErrorMessage());
+            handleListUsers(request, response);
+            return;
+        }
+        if (!passwordValidation.isValid()) {
+            request.setAttribute("error", passwordValidation.getErrorMessage());
+            handleListUsers(request, response);
+            return;
+        }
+
         try {
             User user = UserDAO.getUserById(userId);
             if (user != null) {
-                user.setUsername(username);
-                if (password != null && !password.isEmpty()) {
+                user.setUsername(username.trim());
+                if (password != null && !password.trim().isEmpty()) {
                     user.setPassword(password);
                 }
-                user.setRole(role);
-                user.setEmail(email);
-                user.setStatus(status);
+                user.setRole(role.trim().toLowerCase());
+                user.setEmail(email.trim().toLowerCase());
+                user.setStatus(status.trim().toLowerCase());
 
                 UserDAO.updateUser(user);
             }
