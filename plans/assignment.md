@@ -26,8 +26,6 @@ The application is to be developed in a multi-tier architecture with each tier t
 *   **The business tier** is an application that contains the business logic and processes with connections to the backend database via JDBC using Enterprise Java Beans (EJB).
 *   **The database tier** is a database application used to store all relevant data of the application.
 
-
-
 ## Scenario:
 
 Course Recovery System (CRS) is a software solution that is designed to help educational institutions to manage how the students recover failed or incomplete courses. It ensures that the students can resume on track academically without delaying graduation. The key purpose of the solution are to allow students to enrol in recovery process to improve academic profiles and also allow course administrators and instructors to plan, track and evaluate course recovery plan. To streamline this academic study workflow, a Java-based web application must be developed using Enterprise Java technology. The system should offer the functional requirements as stated in the section “Functional Requirements”.
@@ -54,8 +52,6 @@ This is a special strategy process that allows students to improve weak performa
 | Object Oriented Programming | Week 1 – 2 | Review all lecture topic |
 | | Week 3 | Meeting with module lecturer |
 | | Week 4 | Take recovery exam |
-
-
 
 ### 3) Eligibility Check and Enrolment
 This is a process of checking whether the students meet the required criteria to join the next level of study. The following features are commonly included, but not limited to.
@@ -90,8 +86,6 @@ This is the formal document that provides a summary of a student’s progress, a
 | EN201 | Academic Writing | 2 | A- | 3.7 |
 | | **Cumulative GPA (CGPA):** | | | **3.25** |
 
-
-
 ### 5) Email Notifications
 This is an automated messages send by a system to the users i.e., student’s email address. It helps maintain communication message as alerts, reminders, confirmations and etc between the system and its users to improve accountability. The following are the applicable areas for this service, but not limited to.
 *   User account management
@@ -108,8 +102,6 @@ The following are the additional descriptions for better understanding of the ac
 *   Each course has three attempt opportunities to pass the course only.
 *   The failed component is required only to pass by resubmission or resit in 2nd attempt.
 *   If the students cannot pass the course in the 1st and 2nd attempts, the 3rd attempt requires the students to refer to all assessment components.
-
-
 
 ## Assignment Deliverables
 
@@ -138,8 +130,6 @@ The deliverable consists of a design document, source code, and deployable modul
 *   It is recommended to complete your design, and then start implementing your system based on your design (not vice versa). If you found out during the implementation stage that something is wrong with your design, go back to your documentation and correct it before continuing with your implementation. Update your design document as you redesign and code.
 *   Before delivering the final package, please test the ear files and database files on another machine or your own, or simply delete your existing application and database files, then drop the ear file into the auto-deploy directory, and the database files into the database directory of the application server, and see if everything would deploy and work the same as before.
 
-
-
 #### 2.3 Software Required
 *   Java Development Kit (JDK) 17 or above
 *   Java Enterprise Edition (JEE)
@@ -147,8 +137,6 @@ The deliverable consists of a design document, source code, and deployable modul
 
 **Instructions:**
 This is a Group assignment (2 or 3 students only). Upon submission of your assignment, you would be required to present your assignment at a date and time specified by your module lecturer.
-
-
 
 ## MARKING CRITERIA
 *   Evaluation Report (20 %)
