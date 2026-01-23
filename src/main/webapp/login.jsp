@@ -26,6 +26,9 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
+            <div class="forgot-password-link">
+                <a href="${pageContext.request.contextPath}/forgotPassword.jsp">Forgot Password?</a>
+            </div>
         </div>
     </div>
 </body>

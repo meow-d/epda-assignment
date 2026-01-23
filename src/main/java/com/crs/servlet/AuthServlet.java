@@ -34,6 +34,12 @@ public class AuthServlet extends HttpServlet {
             case "/logout":
                 handleLogout(request, response);
                 break;
+            case "/forgot-password":
+                handleForgotPassword(request, response);
+                break;
+            case "/reset-password":
+                handleResetPassword(request, response);
+                break;
             default:
                 response.sendRedirect(request.getContextPath() + "/login.jsp");
         }
@@ -94,6 +100,74 @@ public class AuthServlet extends HttpServlet {
             session.invalidate();
         }
         response.sendRedirect(request.getContextPath() + "/login.jsp");
+    }
+
+    private void handleForgotPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String email = request.getParameter("email");
+
+        if (email == null || email.trim().isEmpty()) {
+            request.setAttribute("error", "Email address is required");
+            request.getRequestDispatcher("/forgotPassword.jsp").forward(request, response);
+            return;
+        }
+
+        try {
+            boolean success = userEJB.requestPasswordReset(email.trim());
+            if (success) {
+                request.setAttribute("message", "If an account with that email exists, a password reset link has been sent.");
+            } else {
+                // Don't reveal if email exists or not for security
+                request.setAttribute("message", "If an account with that email exists, a password reset link has been sent.");
+            }
+            request.getRequestDispatcher("/forgotPassword.jsp").forward(request, response);
+        } catch (Exception e) {
+            request.setAttribute("error", "Failed to process password reset request: " + e.getMessage());
+            request.getRequestDispatcher("/forgotPassword.jsp").forward(request, response);
+        }
+    }
+
+    private void handleResetPassword(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String token = request.getParameter("token");
+        String password = request.getParameter("password");
+        String confirmPassword = request.getParameter("confirmPassword");
+
+        if (token == null || token.trim().isEmpty()) {
+            request.setAttribute("error", "Invalid reset token");
+            request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
+            return;
+        }
+
+        if (password == null || password.trim().isEmpty()) {
+            request.setAttribute("error", "Password is required");
+            request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
+            return;
+        }
+
+        if (password.length() < 6) {
+            request.setAttribute("error", "Password must be at least 6 characters long");
+            request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            request.setAttribute("error", "Passwords do not match");
+            request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
+            return;
+        }
+
+        try {
+            boolean success = userEJB.resetPasswordWithToken(token.trim(), password.trim());
+            if (success) {
+                request.setAttribute("message", "Password reset successful! You can now log in with your new password.");
+                response.sendRedirect(request.getContextPath() + "/login.jsp?reset=success");
+            } else {
+                request.setAttribute("error", "Invalid or expired reset token");
+                request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Failed to reset password: " + e.getMessage());
+            request.getRequestDispatcher("/resetPassword.jsp").forward(request, response);
+        }
     }
 
     private String getRedirectPage(String role) {

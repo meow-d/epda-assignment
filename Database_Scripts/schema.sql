@@ -98,5 +98,21 @@ CREATE INDEX idx_action_plans_course ON ActionPlans(course_code);
 CREATE INDEX idx_action_plans_status ON ActionPlans(status);
 
 -- Legacy indexes
+-- Password reset tokens for secure password recovery
+CREATE TABLE IF NOT EXISTS PasswordResetTokens (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    expires_at TIMESTAMP NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_password_reset_token ON PasswordResetTokens(token);
+CREATE INDEX idx_password_reset_user ON PasswordResetTokens(user_id);
+CREATE INDEX idx_password_reset_expires ON PasswordResetTokens(expires_at);
+
+-- Legacy indexes
 CREATE INDEX idx_recovery_student ON RecoveryPlans(student_id);
 CREATE INDEX idx_recovery_status ON RecoveryPlans(status);
