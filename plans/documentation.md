@@ -63,6 +63,283 @@ Navigation is implemented through server-side redirects and JSP includes for con
 
 ## UML Diagrams
 
+### Class Diagram
+
+```mermaid
+classDiagram
+    class User {
+        -int id
+        -String username
+        -String password
+        -String role
+        -String email
+        -String status
+        +authenticate()
+        +updatePassword()
+    }
+
+    class Student {
+        -int id
+        -String name
+        -String program
+        -String email
+        -double currentCgpa
+        +calculateCGPA()
+        +checkEligibility()
+    }
+
+    class Course {
+        -String code
+        -String title
+        -int creditHours
+        +getCode()
+        +getTitle()
+        +getCreditHours()
+    }
+
+    class Grade {
+        -int studentId
+        -String courseCode
+        -String semester
+        -int year
+        -int attemptNo
+        -String grade
+        -double gradePoint
+        -String status
+        +getLatestGrade()
+    }
+
+    class Milestone {
+        -int id
+        -int studentId
+        -String courseCode
+        -String title
+        -String description
+        -Date targetDate
+        -String status
+        +create()
+        +updateStatus()
+    }
+
+    class ActionPlan {
+        -int id
+        -Integer milestoneId
+        -int studentId
+        -String courseCode
+        -String task
+        -Timestamp deadline
+        -String status
+        -String grade
+        -Double gradePoint
+        -String progressNotes
+        +updateProgress()
+    }
+
+    User ||--o{ Student : manages
+    Student ||--o{ Course : enrolls
+    Student ||--o{ Grade : receives
+    Student ||--o{ Milestone : has
+    Milestone ||--o{ ActionPlan : contains
+    Course ||--o{ Grade : has
+    Course ||--o{ Milestone : relates
+    Course ||--o{ ActionPlan : relates
+```
+
+### Use Case Diagram
+
+```plantuml
+@startuml
+left to right direction
+
+actor "Academic Officer" as Officer
+actor "Course Administrator" as Admin
+actor "Student" as Student
+
+rectangle "Course Recovery System" {
+    usecase "Login" as UC1
+    usecase "Reset Password" as UC2
+
+    usecase "Create Recovery Plan" as UC3
+    usecase "Set Milestones" as UC4
+    usecase "Track Progress" as UC5
+    usecase "Generate Reports" as UC6
+    usecase "Check Eligibility" as UC7
+
+    usecase "Manage Users" as UC8
+    usecase "View Analytics" as UC9
+    usecase "Advanced Reporting" as UC10
+
+    Officer --> UC1
+    Officer --> UC2
+    Admin --> UC1
+    Admin --> UC2
+
+    Officer --> UC3
+    Officer --> UC4
+    Officer --> UC5
+    Officer --> UC6
+    Officer --> UC7
+
+    Admin --> UC8
+    Admin --> UC9
+    Admin --> UC10
+
+    UC3 --> UC4 : includes
+    UC4 --> UC5 : includes
+    UC6 --> UC7 : includes
+
+    Student --> UC2 : self-service
+}
+
+note right of UC2 : Password recovery\nvia email
+note bottom of UC9 : Dashboard analytics\nand statistics
+note bottom of UC10 : Interactive charts\nand detailed reports
+@enduml
+```
+
+### Sequence Diagram - Course Recovery Process
+
+```mermaid
+sequenceDiagram
+    participant Student
+    participant LoginPage
+    participant AuthServlet
+    participant UserEJB
+    participant UserDAO
+    participant Database
+
+    Student->>LoginPage: Enter credentials
+    LoginPage->>AuthServlet: POST /login
+    AuthServlet->>UserEJB: authenticateUser()
+    UserEJB->>UserDAO: getUserByUsername()
+    UserDAO->>Database: SELECT user data
+    Database-->>UserDAO: Return user data
+    UserDAO-->>UserEJB: Return user object
+    UserEJB-->>AuthServlet: Return authenticated user
+    AuthServlet->>AuthServlet: Store session
+    AuthServlet-->>Student: Redirect to dashboard
+
+    Note over AuthServlet,Database: Authentication Process
+
+    participant Officer
+    participant RecoveryPage
+    participant OfficerServlet
+    participant RecoveryEJB
+    participant MilestoneDAO
+    participant ActionPlanDAO
+    participant EmailUtil
+
+    Officer->>RecoveryPage: Create recovery plan
+    RecoveryPage->>OfficerServlet: POST /create-plan
+    OfficerServlet->>RecoveryEJB: createRecoveryPlan()
+    RecoveryEJB->>MilestoneDAO: addMilestone()
+    MilestoneDAO->>Database: INSERT milestone
+    Database-->>MilestoneDAO: Confirm insertion
+    RecoveryEJB->>ActionPlanDAO: addActionPlan()
+    ActionPlanDAO->>Database: INSERT action plan
+    Database-->>ActionPlanDAO: Confirm insertion
+    RecoveryEJB->>EmailUtil: sendNotification()
+    EmailUtil->>Student: Send email
+    RecoveryEJB-->>OfficerServlet: Return success
+    OfficerServlet-->>Officer: Redirect with success
+```
+
+### Entity Relationship Diagram
+
+```mermaid
+erDiagram
+    Users {
+        int id PK
+        varchar username UQ
+        varchar password
+        varchar role
+        varchar email UQ
+        varchar status
+        timestamp created_at
+    }
+
+    Students {
+        int id PK
+        varchar name
+        varchar program
+        varchar email UQ
+        decimal current_cgpa
+        timestamp created_at
+    }
+
+    Courses {
+        varchar code PK
+        varchar title
+        int credit_hours
+    }
+
+    Grades {
+        int student_id FK
+        varchar course_code FK
+        varchar semester
+        int year
+        int attempt_no
+        varchar grade
+        decimal grade_point
+        varchar status
+    }
+
+    Milestones {
+        int id PK
+        int student_id FK
+        varchar course_code FK
+        varchar title
+        text description
+        date target_date
+        varchar status
+        timestamp created_at
+    }
+
+    ActionPlans {
+        int id PK
+        int milestone_id FK
+        int student_id FK
+        varchar course_code FK
+        text task
+        timestamp deadline
+        varchar status
+        varchar grade
+        decimal grade_point
+        text progress_notes
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    RecoveryPlans {
+        int id PK
+        int student_id FK
+        varchar course_code FK
+        text task
+        timestamp deadline
+        varchar status
+        timestamp created_at
+    }
+
+    PasswordResetTokens {
+        int id PK
+        int user_id FK
+        varchar token UQ
+        timestamp expires_at
+        boolean used
+        timestamp created_at
+    }
+
+    Users ||--o{ Students : manages
+    Users ||--o{ PasswordResetTokens : has
+    Students ||--o{ Grades : receives
+    Students ||--o{ Milestones : creates
+    Students ||--o{ ActionPlans : participates
+    Students ||--o{ RecoveryPlans : has
+    Courses ||--o{ Grades : awarded
+    Courses ||--o{ Milestones : relates
+    Courses ||--o{ ActionPlans : relates
+    Courses ||--o{ RecoveryPlans : relates
+    Milestones ||--o{ ActionPlans : contains
 ```
 Class Diagram:
 
@@ -194,6 +471,8 @@ Entity Relationship Diagram:
 |     attempt_no |       +-----------------+       |                 |
 +----------------+                               | +updateProgress()|
                                                  +-----------------+
+
+```
 
 Relationships:
 - Users can manage Students and Courses
