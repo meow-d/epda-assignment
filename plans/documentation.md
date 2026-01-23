@@ -27,9 +27,9 @@ The Course Recovery System is a web-based application designed to help education
 
 ## System Architecture Overview
 
-The Course Recovery System implements a three-tier architecture consisting of presentation, business, and database tiers. The presentation tier uses JavaServer Pages for rendering web interfaces and servlets for handling HTTP requests and responses. The business tier employs Enterprise JavaBeans for implementing business logic, transaction management, and data processing. The database tier uses MySQL for persistent data storage with JDBC for data access operations.
+The Course Recovery System implements a three-tier architecture consisting of presentation, business, and database tiers. The presentation tier uses JavaServer Pages for rendering web interfaces and servlets for handling HTTP requests and responses \cite{apache-tomcat-docs}. The business tier employs Enterprise JavaBeans for implementing business logic, transaction management, and data processing \cite{oracle-javaee-tutorial}. The database tier uses MySQL for persistent data storage with JDBC for data access operations \cite{mysql-refman}.
 
-The presentation tier communicates with the business tier through EJB method invocations, while the business tier accesses the database tier through DAO classes that encapsulate SQL operations. This layered architecture ensures separation of concerns, maintainability, and scalability of the system. Security is implemented through custom filters that enforce role-based access control and protect against common web vulnerabilities such as cross-site request forgery.
+The presentation tier communicates with the business tier through EJB method invocations, while the business tier accesses the database tier through DAO classes that encapsulate SQL operations. This layered architecture ensures separation of concerns, maintainability, and scalability of the system. Security is implemented through custom filters that enforce role-based access control and protect against common web vulnerabilities such as cross-site request forgery \cite{owasp-cheatsheet}.
 
 ## Web Components Design
 
@@ -346,7 +346,7 @@ erDiagram
 
 The system includes two additional features beyond the core requirements to enhance functionality and provide advanced capabilities. The first additional feature is a dashboard analytics system that provides real-time statistical insights for administrators. This feature displays key metrics including total student count, eligibility statistics, recovery plan success rates, and system usage patterns. The analytics are presented through visual metric cards on the admin dashboard, allowing administrators to quickly assess system performance and student progress without manual data analysis.
 
-The second additional feature is an advanced reporting system with interactive charts and comprehensive data visualization. This feature provides detailed analytics through Chart.js implementations including CGPA distribution pie charts, grade distribution bar charts, and failed courses trend line charts. The advanced reporting page includes export capabilities for PDF generation and CSV data export, along with recent activity tracking and detailed statistical breakdowns. These additional features enhance the system's analytical capabilities and provide administrators with powerful tools for data-driven decision making and performance monitoring.
+The second additional feature is an advanced reporting system with interactive charts and comprehensive data visualization. This feature provides detailed analytics through Chart.js implementations including CGPA distribution pie charts, grade distribution bar charts, and failed courses trend line charts \cite{chartjs-docs}. The advanced reporting page includes export capabilities for PDF generation and CSV data export, along with recent activity tracking and detailed statistical breakdowns. These additional features enhance the system's analytical capabilities and provide administrators with powerful tools for data-driven decision making and performance monitoring.
 
 ## Screen Captures
 
