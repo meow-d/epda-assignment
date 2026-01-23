@@ -3,13 +3,18 @@ package com.crs.ejb;
 import com.crs.dao.StudentDAO;
 import com.crs.model.Grade;
 import com.crs.model.Student;
+import com.crs.util.DBConnect;
 import com.crs.util.EmailUtil;
 
 import jakarta.ejb.Stateless;
 import jakarta.ejb.TransactionManagement;
 import jakarta.ejb.TransactionManagementType;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,6 +114,123 @@ public class AcademicEJB {
         } catch (jakarta.mail.MessagingException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Checks if a student can attempt a course again based on the 3-attempt policy.
+     * Each course allows maximum 3 attempts to pass.
+     */
+    public boolean canAttemptCourse(int studentId, String courseCode) throws SQLException, IOException {
+        int attempts = getCourseAttemptCount(studentId, courseCode);
+        return attempts < 3;
+    }
+
+    /**
+     * Gets the number of attempts a student has made for a specific course.
+     */
+    public int getCourseAttemptCount(int studentId, String courseCode) throws SQLException, IOException {
+        String query = "SELECT COUNT(*) as attempts FROM Grades WHERE student_id = ? AND course_code = ?";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, studentId);
+            ps.setString(2, courseCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("attempts");
+                }
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * Gets the next attempt number for a student-course combination.
+     */
+    public int getNextAttemptNumber(int studentId, String courseCode) throws SQLException, IOException {
+        return getCourseAttemptCount(studentId, courseCode) + 1;
+    }
+
+    /**
+     * Determines what components need to be retaken based on the attempt number.
+     * - Attempt 1: No specific component requirements
+     * - Attempt 2: Failed component only (resubmission/resit)
+     * - Attempt 3: All assessment components must be retaken
+     */
+    public String getRequiredComponentsForAttempt(int studentId, String courseCode) throws SQLException, IOException {
+        int nextAttempt = getNextAttemptNumber(studentId, courseCode);
+
+        switch (nextAttempt) {
+            case 1:
+                return "Initial course attempt - all components required";
+            case 2:
+                return "Failed component resubmission/resit only";
+            case 3:
+                return "All assessment components must be retaken";
+            default:
+                return "Maximum attempts exceeded";
+        }
+    }
+
+    /**
+     * Checks if a student has passed a course (any attempt).
+     */
+    public boolean hasPassedCourse(int studentId, String courseCode) throws SQLException, IOException {
+        String query = "SELECT COUNT(*) as passed FROM Grades WHERE student_id = ? AND course_code = ? AND status = 'passed'";
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, studentId);
+            ps.setString(2, courseCode);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("passed") > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets all courses a student has failed and can still attempt.
+     */
+    public List<String> getRetryableCourses(int studentId) throws SQLException, IOException {
+        List<String> retryableCourses = new ArrayList<>();
+        String query = "SELECT DISTINCT course_code FROM Grades WHERE student_id = ? AND status = 'failed'";
+
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, studentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String courseCode = rs.getString("course_code");
+                    if (canAttemptCourse(studentId, courseCode) && !hasPassedCourse(studentId, courseCode)) {
+                        retryableCourses.add(courseCode);
+                    }
+                }
+            }
+        }
+        return retryableCourses;
+    }
+
+    /**
+     * Gets courses that have reached maximum attempts and cannot be retried.
+     */
+    public List<String> getMaxAttemptsCourses(int studentId) throws SQLException, IOException {
+        List<String> maxAttemptsCourses = new ArrayList<>();
+        String query = "SELECT DISTINCT course_code FROM Grades WHERE student_id = ? AND status = 'failed'";
+
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setInt(1, studentId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String courseCode = rs.getString("course_code");
+                    if (!canAttemptCourse(studentId, courseCode) && !hasPassedCourse(studentId, courseCode)) {
+                        maxAttemptsCourses.add(courseCode);
+                    }
+                }
+            }
+        }
+        return maxAttemptsCourses;
     }
 
     private void sendWelcomeEmail(String email, String name) {
