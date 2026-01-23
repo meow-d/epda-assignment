@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.crs.util.CSRFUtil" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,6 +23,7 @@
                     <div class="error-message">${error}</div>
                 </c:if>
                 <form action="${pageContext.request.contextPath}/auth/reset-password" method="post" class="form-group">
+                    <input type="hidden" name="csrfToken" value="<%= CSRFUtil.getToken(request) %>">
                     <input type="hidden" name="token" value="${param.token}">
 
                     <label for="password">New Password:</label>

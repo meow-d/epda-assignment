@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.crs.util.CSRFUtil" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,6 +26,7 @@
                     <div class="success-message">${message}</div>
                 </c:if>
                 <form action="${pageContext.request.contextPath}/auth/forgot-password" method="post" class="form-group">
+                    <input type="hidden" name="csrfToken" value="<%= CSRFUtil.getToken(request) %>">
                     <p>Enter your email address and we'll send you a link to reset your password.</p>
 
                     <label for="email">Email Address:</label>

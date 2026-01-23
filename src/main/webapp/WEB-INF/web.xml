@@ -56,35 +56,18 @@
 
 
 
-    <!-- Temporarily disabled security constraints for testing
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Admin Area</web-resource-name>
-            <url-pattern>/admin/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>admin</role-name>
-        </auth-constraint>
-    </security-constraint>
+     <!-- Custom security filter handles authentication and authorization -->
+     <!-- Container-managed security disabled in favor of custom filter -->
 
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Officer Area</web-resource-name>
-            <url-pattern>/officer/*</url-pattern>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>officer</role-name>
-        </auth-constraint>
-    </security-constraint>
+     <filter>
+         <filter-name>SecurityFilter</filter-name>
+         <filter-class>com.crs.filter.SecurityFilter</filter-class>
+     </filter>
 
-    <login-config>
-        <auth-method>FORM</auth-method>
-        <form-login-config>
-            <form-login-page>/login.jsp</form-login-page>
-            <form-error-page>/login.jsp?error=true</form-error-page>
-        </form-login-config>
-    </login-config>
-    -->
+     <filter-mapping>
+         <filter-name>SecurityFilter</filter-name>
+         <url-pattern>/*</url-pattern>
+     </filter-mapping>
 
     <context-param>
         <param-name>app.name</param-name>
