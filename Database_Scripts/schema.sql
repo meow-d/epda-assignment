@@ -37,6 +37,39 @@ CREATE TABLE IF NOT EXISTS Grades (
     FOREIGN KEY (course_code) REFERENCES Courses(code) ON DELETE CASCADE
 );
 
+-- Enhanced recovery plan system with milestones and action plans
+CREATE TABLE IF NOT EXISTS Milestones (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    course_code VARCHAR(10) NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    target_date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES Students(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_code) REFERENCES Courses(code) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS ActionPlans (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    milestone_id INT,
+    student_id INT NOT NULL,
+    course_code VARCHAR(10) NOT NULL,
+    task TEXT NOT NULL,
+    deadline TIMESTAMP NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    grade VARCHAR(5),
+    grade_point DECIMAL(3, 2),
+    progress_notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (milestone_id) REFERENCES Milestones(id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES Students(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_code) REFERENCES Courses(code) ON DELETE CASCADE
+);
+
+-- Keep legacy RecoveryPlans table for backward compatibility (can be removed later)
 CREATE TABLE IF NOT EXISTS RecoveryPlans (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
@@ -55,5 +88,15 @@ CREATE INDEX idx_students_name ON Students(name);
 CREATE INDEX idx_students_program ON Students(program);
 CREATE INDEX idx_grades_student ON Grades(student_id);
 CREATE INDEX idx_grades_status ON Grades(status);
+-- Indexes for enhanced recovery system
+CREATE INDEX idx_milestones_student ON Milestones(student_id);
+CREATE INDEX idx_milestones_course ON Milestones(course_code);
+CREATE INDEX idx_milestones_status ON Milestones(status);
+CREATE INDEX idx_action_plans_milestone ON ActionPlans(milestone_id);
+CREATE INDEX idx_action_plans_student ON ActionPlans(student_id);
+CREATE INDEX idx_action_plans_course ON ActionPlans(course_code);
+CREATE INDEX idx_action_plans_status ON ActionPlans(status);
+
+-- Legacy indexes
 CREATE INDEX idx_recovery_student ON RecoveryPlans(student_id);
 CREATE INDEX idx_recovery_status ON RecoveryPlans(status);
