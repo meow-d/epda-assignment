@@ -1,11 +1,11 @@
 ---
 # epda-assignment-mghw
 title: Add system screenshots with explanations
-status: todo
+status: completed
 type: task
 priority: normal
 created_at: 2026-01-23T03:32:06Z
-updated_at: 2026-01-23T03:44:09Z
+updated_at: 2026-01-23T14:14:36Z
 parent: epda-assignment-g475
 ---
 
