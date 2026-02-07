@@ -14,7 +14,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      # TODO no idea if this works
+      - ./mysql-data:/var/lib/mysql:Z
       - ./Database_Scripts/schema.sql:/docker-entrypoint-initdb.d/1-schema.sql:ro
       - ./Database_Scripts/data.sql:/docker-entrypoint-initdb.d/2-data.sql:ro
     networks:
@@ -26,7 +27,8 @@ services:
       retries: 5
 
   tomee:
-    image: tomee:9.1.0-jre17-webprofile
+    # TODO no idea if this works
+    image: tomee:webprofile
     container_name: crs-tomee
     ports:
       - "8080:8080"
@@ -42,10 +44,6 @@ services:
         condition: service_healthy
     networks:
       - crs-network
-
-volumes:
-  mysql-data:
-    driver: local
 
 networks:
   crs-network:

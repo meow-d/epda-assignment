@@ -1,9 +1,9 @@
 # Course Recovery System
-Note: 100% vibe coded.
+Note: nearly 100% vibe coded for now. But we'll manually review.
 
 A Java EE web application for managing course recovery plans in educational institutions.
 
-## Technologies
+## tech stack
 - **Java:** JDK 17+
 - **Application Server:** Apache TomEE 9.x (Jakarta EE 9)
 - **Database:** MySQL 8.0
