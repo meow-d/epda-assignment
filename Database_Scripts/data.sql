@@ -1,16 +1,16 @@
 INSERT INTO Users (username, password, role, email, status) VALUES
-('admin', 'admin123', 'admin', 'admin@crs.edu', 'active'),
-('officer1', 'officer123', 'officer', 'officer1@crs.edu', 'active'),
-('officer2', 'officer123', 'officer', 'officer2@crs.edu', 'active');
+('admin', 'admin123', 'admin', 'meow_d@tuta.io', 'active'),
+('officer1', 'officer123', 'officer', 'meow_d@tuta.io', 'active'),
+('officer2', 'officer123', 'officer', 'meow_d@tuta.io', 'active');
 
 INSERT INTO Students (id, name, program, email, current_cgpa) VALUES
-(1, 'John Doe', 'Bachelor of Computer Science', 'john.doe@crs.edu', 3.25),
-(2, 'Jane Smith', 'Bachelor of Information Technology', 'jane.smith@crs.edu', 2.85),
-(3, 'Alex Tan', 'Bachelor of Computer Science', 'alex.tan@crs.edu', 3.11),
-(4, 'Sarah Johnson', 'Bachelor of Software Engineering', 'sarah.johnson@crs.edu', 1.95),
-(5, 'Michael Brown', 'Bachelor of Computer Science', 'michael.brown@crs.edu', 2.45),
-(6, 'Emily Davis', 'Bachelor of Information Technology', 'emily.davis@crs.edu', 3.55),
-(7, 'David Wilson', 'Bachelor of Computer Science', 'david.wilson@crs.edu', 1.75);
+(1, 'John Doe', 'Bachelor of Computer Science', 'john.doe@example.com', 3.25),
+(2, 'Jane Smith', 'Bachelor of Information Technology', 'jane.smith@example.com', 2.85),
+(3, 'Alex Tan', 'Bachelor of Computer Science', 'alex.tan@example.com', 3.11),
+(4, 'Sarah Johnson', 'Bachelor of Software Engineering', 'sarah.johnson@example.com', 1.95),
+(5, 'Michael Brown', 'Bachelor of Computer Science', 'michael.brown@example.com', 2.45),
+(6, 'Emily Davis', 'Bachelor of Information Technology', 'emily.davis@example.com', 3.55),
+(7, 'David Wilson', 'Bachelor of Computer Science', 'david.wilson@example.com', 1.75);
 
 INSERT INTO Courses (code, title, credit_hours) VALUES
 ('CS201', 'Data Structures', 3),
