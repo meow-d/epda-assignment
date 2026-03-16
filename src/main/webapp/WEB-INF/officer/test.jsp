@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <% request.setAttribute("currentPage", "dashboard"); %>
 <% request.setAttribute("pageTitle", "Officer Dashboard - Course Recovery System"); %>
-<jsp:include page="../includes/officer-header.jsp" />
+<jsp:include page="/WEB-INF/includes/header.jsp" />
             <h2>Academic Officer Dashboard</h2>
             <p>Welcome, Academic Officer!</p>
             <div class="dashboard">
@@ -23,4 +23,4 @@
                     </div>
                 </div>
             </div>
-<jsp:include page="../includes/officer-footer.jsp" />
+<jsp:include page="/WEB-INF/includes/footer.jsp" />

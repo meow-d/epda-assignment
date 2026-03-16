@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <% request.setAttribute("currentPage", "recovery-plan"); %>
 <% request.setAttribute("pageTitle", "Recovery Plan - Course Recovery System"); %>
-<jsp:include page="../includes/officer-header.jsp" %>
+<jsp:include page="/WEB-INF/includes/header.jsp" %>
             <div class="recovery-plan">
                 <h2>Course Recovery Plans</h2>
                 <c:if test="${not empty error}">
@@ -131,4 +131,4 @@
                     </div>
                 </c:if>
             </div>
-<jsp:include page="../includes/officer-footer.jsp" />
+<jsp:include page="/WEB-INF/includes/footer.jsp" />

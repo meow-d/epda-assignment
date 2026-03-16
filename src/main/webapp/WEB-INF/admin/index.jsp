@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <% request.setAttribute("currentPage", "dashboard"); %>
 <% request.setAttribute("pageTitle", "Admin Dashboard - Course Recovery System"); %>
-<jsp:include page="../includes/admin-header.jsp" />
+<jsp:include page="/WEB-INF/includes/header.jsp" />
             <h2>Admin Dashboard</h2>
             <p>Welcome, Admin!</p>
             <div class="dashboard">
@@ -18,4 +18,4 @@
                     </div>
                 </div>
             </div>
-<jsp:include page="../includes/admin-footer.jsp" />
+<jsp:include page="/WEB-INF/includes/footer.jsp" />

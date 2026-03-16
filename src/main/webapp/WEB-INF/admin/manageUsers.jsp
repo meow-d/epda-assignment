@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <% request.setAttribute("currentPage", "users"); %>
 <% request.setAttribute("pageTitle", "Manage Users - Course Recovery System"); %>
-<jsp:include page="../includes/admin-header.jsp" %>
+<jsp:include page="/WEB-INF/includes/header.jsp" %>
             <div class="manage-users">
                 <h2>Manage Users</h2>
                 <c:if test="${not empty error}">
@@ -42,4 +42,4 @@
                     <p class="no-data">No users found.</p>
                 </c:if>
             </div>
-<jsp:include page="../includes/admin-footer.jsp" />
+<jsp:include page="/WEB-INF/includes/footer.jsp" />

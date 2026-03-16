@@ -17,7 +17,7 @@
     ".export-btn { margin-top: 1rem; }" +
     "@media (max-width: 768px) { .reports-container { grid-template-columns: 1fr; } }" +
     "</style>"); %>
-<jsp:include page="../includes/admin-header.jsp" %>
+<jsp:include page="/WEB-INF/includes/header.jsp" %>
             <h2>Advanced Reports & Analytics</h2>
 
             <c:if test="${not empty error}">
@@ -213,4 +213,4 @@
             alert('CSV export functionality would be implemented here');
         }
     </script>
-<jsp:include page="../includes/admin-footer.jsp" />
+<jsp:include page="/WEB-INF/includes/footer.jsp" />

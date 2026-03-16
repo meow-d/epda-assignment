@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <% request.setAttribute("currentPage", "eligibility"); %>
 <% request.setAttribute("pageTitle", "Eligibility Check - Course Recovery System"); %>
-<jsp:include page="../includes/officer-header.jsp" %>
+<jsp:include page="/WEB-INF/includes/header.jsp" %>
             <div class="eligibility">
                 <h2>Student Eligibility Check</h2>
                 <c:if test="${not empty error}">
@@ -66,4 +66,4 @@
                     <p>Not Eligible: ${notEligibleCount}</p>
                 </div>
             </div>
-<jsp:include page="../includes/officer-footer.jsp" />
+<jsp:include page="/WEB-INF/includes/footer.jsp" />
