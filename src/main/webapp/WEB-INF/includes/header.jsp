@@ -22,11 +22,9 @@
                         <a href="${pageContext.request.contextPath}/admin/users" ${currentPage == 'users' ? 'class="active"' : ''}>Manage Users</a>
                         <a href="${pageContext.request.contextPath}/admin/add-user" ${currentPage == 'add-user' ? 'class="active"' : ''}>Add User</a>
                         <a href="${pageContext.request.contextPath}/admin/advanced-reports" ${currentPage == 'advanced-reports' ? 'class="active"' : ''}>Advanced Reports</a>
-                        <c:if test="${currentPage == 'recovery-plan' || currentPage == 'eligibility' || currentPage == 'academic-report'}">
-                            <a href="${pageContext.request.contextPath}/officer/recovery-plan" ${currentPage == 'recovery-plan' ? 'class="active"' : ''}>Recovery Plans</a>
-                            <a href="${pageContext.request.contextPath}/officer/eligibility" ${currentPage == 'eligibility' ? 'class="active"' : ''}>Eligibility Check</a>
-                            <a href="${pageContext.request.contextPath}/officer/academic-report" ${currentPage == 'academic-report' ? 'class="active"' : ''}>Academic Report</a>
-                        </c:if>
+                        <a href="${pageContext.request.contextPath}/officer/recovery-plan" ${currentPage == 'recovery-plan' ? 'class="active"' : ''}>Recovery Plans</a>
+                        <a href="${pageContext.request.contextPath}/officer/eligibility" ${currentPage == 'eligibility' ? 'class="active"' : ''}>Eligibility Check</a>
+                        <a href="${pageContext.request.contextPath}/officer/academic-report" ${currentPage == 'academic-report' ? 'class="active"' : ''}>Academic Report</a>
                     </c:when>
                     <c:when test="${sessionScope.role == 'officer'}">
                         <a href="${pageContext.request.contextPath}/officer/" ${currentPage == 'dashboard' ? 'class="active"' : ''}>Dashboard</a>

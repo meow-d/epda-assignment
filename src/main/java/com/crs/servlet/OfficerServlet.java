@@ -33,6 +33,7 @@ public class OfficerServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null || path.equals("/")) {
+            request.setAttribute("currentPage", "dashboard");
             request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
             return;
         }
@@ -51,6 +52,7 @@ public class OfficerServlet extends HttpServlet {
                 handleListStudents(request, response);
                 break;
             default:
+                request.setAttribute("currentPage", "dashboard");
                 request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         }
     }
@@ -91,6 +93,7 @@ public class OfficerServlet extends HttpServlet {
     }
 
     private void handleRecoveryPlan(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("currentPage", "recovery-plan");
         String studentIdStr = request.getParameter("studentId");
 
         try {
@@ -116,6 +119,7 @@ public class OfficerServlet extends HttpServlet {
     }
 
     private void handleEligibility(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("currentPage", "eligibility");
         try {
             List<Student> allStudents = StudentDAO.getAllStudents();
             List<Map<String, Object>> eligibilityList = new java.util.ArrayList<>();
@@ -143,6 +147,7 @@ public class OfficerServlet extends HttpServlet {
     }
 
     private void handleAcademicReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("currentPage", "academic-report");
         String studentIdStr = request.getParameter("studentId");
 
         try {
@@ -168,6 +173,7 @@ public class OfficerServlet extends HttpServlet {
     }
 
     private void handleListStudents(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("currentPage", "dashboard");
         try {
             List<Student> students = StudentDAO.getAllStudents();
             request.setAttribute("students", students);
