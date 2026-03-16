@@ -100,7 +100,7 @@ public class AuthServlet extends HttpServlet {
             }
         } catch (Exception e) {
             HttpSession session = request.getSession(true);
-            session.setAttribute("errorMessage", "Login failed: " + e.getMessage());
+            session.setAttribute("errorMessage", e.getMessage());
             response.sendRedirect(request.getContextPath() + "/login.jsp?error=exception");
         }
     }

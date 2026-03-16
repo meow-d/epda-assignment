@@ -20,7 +20,7 @@
                         <c:when test="${param.error == 'invalid'}">Invalid username or password</c:when>
                         <c:when test="${param.error == 'exception'}">
                           <c:if test="${not empty sessionScope.errorMessage}">
-                            ${sessionScope.errorMessage}
+                            Login failed: ${sessionScope.errorMessage}
                             <c:remove var="errorMessage" scope="session" />
                           </c:if>
                         </c:when>
