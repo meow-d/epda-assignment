@@ -1,7 +1,7 @@
 INSERT INTO Users (username, password, role, email, status) VALUES
 ('admin', 'admin123', 'admin', 'meow_d@tuta.io', 'active'),
-('officer1', 'officer123', 'officer', 'meow_d@tuta.io', 'active'),
-('officer2', 'officer123', 'officer', 'meow_d@tuta.io', 'active');
+('officer1', 'officer123', 'officer', 'meow_d@example.com', 'active'),
+('officer2', 'officer123', 'officer', 'mmeow_d@example.com', 'active');
 
 INSERT INTO Students (id, name, program, email, current_cgpa) VALUES
 (1, 'John Doe', 'Bachelor of Computer Science', 'john.doe@example.com', 3.25),
