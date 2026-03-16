@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Course Recovery System</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 </head>
 <body class="login-page">
     <div class="login-container">
@@ -16,15 +16,22 @@
             <c:if test="${not empty param.error}">
                 <div class="error-message">
                     <c:choose>
-                        <c:when test="${param.error == 'auth'}">Access denied. Please log in.</c:when>
-                        <c:otherwise>Invalid username or password</c:otherwise>
+                        <c:when test="${param.error == 'auth'}">Incorrect username or password</c:when>
+                        <c:when test="${param.error == 'invalid'}">Invalid username or password</c:when>
+                        <c:when test="${param.error == 'exception'}">
+                          <c:if test="${not empty sessionScope.errorMessage}">
+                            ${sessionScope.errorMessage}
+                            <c:remove var="errorMessage" scope="session" />
+                          </c:if>
+                        </c:when>
+                        <c:otherwise>An unknown error occured</c:otherwise>
                     </c:choose>
                 </div>
             </c:if>
             <c:if test="${not empty param.reset and param.reset == 'success'}">
                 <div class="success-message">Password reset successful! Please log in with your new password.</div>
             </c:if>
-            <form action="auth/login" method="post">
+            <form action="${pageContext.request.contextPath}auth/login" method="post">
                 <input type="hidden" name="csrfToken" value="<%= CSRFUtil.getToken(request) %>">
                 <div class="form-group">
                     <label for="username">Username:</label>

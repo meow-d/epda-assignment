@@ -74,12 +74,12 @@ public class AuthServlet extends HttpServlet {
 
         if (!usernameValidation.isValid()) {
             request.setAttribute("error", usernameValidation.getErrorMessage());
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/login.jsp?error=invalid");
             return;
         }
         if (!passwordValidation.isValid()) {
             request.setAttribute("error", passwordValidation.getErrorMessage());
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/login.jsp?error=invalid");
             return;
         }
 
@@ -96,11 +96,12 @@ public class AuthServlet extends HttpServlet {
                 String redirectPage = getRedirectPage(user.getRole());
                 response.sendRedirect(request.getContextPath() + redirectPage);
             } else {
-                response.sendRedirect(request.getContextPath() + "/login.jsp?error=true");
+                response.sendRedirect(request.getContextPath() + "/login.jsp?error=auth");
             }
         } catch (Exception e) {
-            request.setAttribute("error", "Login failed: " + e.getMessage());
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
+            HttpSession session = request.getSession(true);
+            session.setAttribute("errorMessage", "Login failed: " + e.getMessage());
+            response.sendRedirect(request.getContextPath() + "/login.jsp?error=exception");
         }
     }
 
