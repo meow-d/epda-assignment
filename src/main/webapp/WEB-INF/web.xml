@@ -69,6 +69,34 @@
          <url-pattern>/*</url-pattern>
      </filter-mapping>
 
+    <!-- Explicit servlet mappings to ensure proper registration -->
+    <servlet>
+        <servlet-name>AdvancedReportServlet</servlet-name>
+        <servlet-class>com.crs.servlet.AdvancedReportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdvancedReportServlet</servlet-name>
+        <url-pattern>/admin/advanced-reports</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>OfficerServlet</servlet-name>
+        <servlet-class>com.crs.servlet.OfficerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>OfficerServlet</servlet-name>
+        <url-pattern>/officer/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>AdminServlet</servlet-name>
+        <servlet-class>com.crs.servlet.AdminServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminServlet</servlet-name>
+        <url-pattern>/admin/*</url-pattern>
+    </servlet-mapping>
+
     <context-param>
         <param-name>app.name</param-name>
         <param-value>Course Recovery System</param-value>
