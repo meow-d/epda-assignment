@@ -31,13 +31,17 @@ public class OfficerServlet extends HttpServlet {
         }
 
         String path = request.getPathInfo();
+        System.out.println("[OfficerServlet] doGet path: " + path);
 
-        if (path == null || path.equals("/")) {
+        if (path == null || path.equals("/") || path.isEmpty()) {
             request.setAttribute("currentPage", "dashboard");
             request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
             return;
         }
 
+        // Normalize path - remove trailing slashes
+        path = path.replaceAll("/+$", "");
+        
         switch (path) {
             case "/recovery-plan":
                 handleRecoveryPlan(request, response);
@@ -52,6 +56,7 @@ public class OfficerServlet extends HttpServlet {
                 handleListStudents(request, response);
                 break;
             default:
+                System.out.println("[OfficerServlet] Unknown path, defaulting to dashboard: " + path);
                 request.setAttribute("currentPage", "dashboard");
                 request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         }

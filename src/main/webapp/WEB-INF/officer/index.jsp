@@ -1,5 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<% request.setAttribute("currentPage", "dashboard"); %>
 <% request.setAttribute("pageTitle", "Officer Dashboard - Course Recovery System"); %>
 <jsp:include page="/WEB-INF/includes/header.jsp" />
             <h2>Academic Officer Dashboard</h2>

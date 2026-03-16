@@ -1,6 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<% request.setAttribute("currentPage", "eligibility"); %>
 <% request.setAttribute("pageTitle", "Eligibility Check - Course Recovery System"); %>
 <jsp:include page="/WEB-INF/includes/header.jsp" %>
             <div class="eligibility">
