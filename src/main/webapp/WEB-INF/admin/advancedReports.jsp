@@ -1,39 +1,23 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="java.util.Map" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Reports - Course Recovery System</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .reports-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0; }
-        .report-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .report-card h3 { margin-top: 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 0.5rem; }
-        .chart-container { position: relative; height: 300px; margin: 1rem 0; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0; }
-        .stat-item { text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 6px; }
-        .stat-value { font-size: 2rem; font-weight: bold; color: #007bff; display: block; }
-        .stat-label { font-size: 0.9rem; color: #666; margin-top: 0.5rem; }
-        .export-btn { margin-top: 1rem; }
-        @media (max-width: 768px) { .reports-container { grid-template-columns: 1fr; } }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Course Recovery System</h1>
-            <nav>
-                <a href="${pageContext.request.contextPath}/admin/">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/admin/advanced-reports" class="active">Advanced Reports</a>
-                <a href="${pageContext.request.contextPath}/admin/users">Manage Users</a>
-                <a href="${pageContext.request.contextPath}/auth/logout">Logout</a>
-            </nav>
-        </header>
-        <main>
+<% request.setAttribute("currentPage", "advanced-reports"); %>
+<% request.setAttribute("pageTitle", "Advanced Reports - Course Recovery System"); %>
+<% request.setAttribute("customHead", 
+    "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>" +
+    "<style>" +
+    ".reports-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0; }" +
+    ".report-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }" +
+    ".report-card h3 { margin-top: 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 0.5rem; }" +
+    ".chart-container { position: relative; height: 300px; margin: 1rem 0; }" +
+    ".stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0; }" +
+    ".stat-item { text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 6px; }" +
+    ".stat-value { font-size: 2rem; font-weight: bold; color: #007bff; display: block; }" +
+    ".stat-label { font-size: 0.9rem; color: #666; margin-top: 0.5rem; }" +
+    ".export-btn { margin-top: 1rem; }" +
+    "@media (max-width: 768px) { .reports-container { grid-template-columns: 1fr; } }" +
+    "</style>"); %>
+<jsp:include page="../includes/admin-header.jsp" %>
             <h2>Advanced Reports & Analytics</h2>
 
             <c:if test="${not empty error}">
@@ -229,5 +213,4 @@
             alert('CSV export functionality would be implemented here');
         }
     </script>
-</body>
-</html>
+<jsp:include page="../includes/admin-footer.jsp" />

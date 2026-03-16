@@ -1,24 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Officer Dashboard - Course Recovery System</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Course Recovery System</h1>
-            <nav>
-                <a href="${pageContext.request.contextPath}/officer/recovery-plan">Recovery Plans</a>
-                <a href="${pageContext.request.contextPath}/officer/eligibility">Eligibility Check</a>
-                <a href="${pageContext.request.contextPath}/officer/academic-report">Academic Report</a>
-                <a href="${pageContext.request.contextPath}/auth/logout">Logout</a>
-            </nav>
-        </header>
-        <main>
+<% request.setAttribute("currentPage", "dashboard"); %>
+<% request.setAttribute("pageTitle", "Officer Dashboard - Course Recovery System"); %>
+<jsp:include page="../includes/officer-header.jsp" />
             <h2>Academic Officer Dashboard</h2>
             <p>Welcome, Academic Officer!</p>
             <div class="dashboard">
@@ -40,7 +23,4 @@
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
-</body>
-</html>
+<jsp:include page="../includes/officer-footer.jsp" />

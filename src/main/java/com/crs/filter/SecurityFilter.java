@@ -54,14 +54,14 @@ public class SecurityFilter implements Filter {
             return;
         }
 
-        // Admin-only areas
+        // Admin-only areas (admin can access everything including officer areas)
         if (path.startsWith("/admin/") && !"admin".equals(role)) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: Admin role required");
             return;
         }
 
-        // Officer-only areas
-        if (path.startsWith("/officer/") && !"officer".equals(role)) {
+        // Officer-only areas (admin can also access these)
+        if (path.startsWith("/officer/") && !"officer".equals(role) && !"admin".equals(role)) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: Officer role required");
             return;
         }

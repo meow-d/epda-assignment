@@ -1,24 +1,8 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit User - Course Recovery System</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Course Recovery System</h1>
-            <nav>
-                <a href="${pageContext.request.contextPath}/admin/">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/admin/users">Manage Users</a>
-                <a href="${pageContext.request.contextPath}/auth/logout">Logout</a>
-            </nav>
-        </header>
-        <main>
+<% request.setAttribute("currentPage", "users"); %>
+<% request.setAttribute("pageTitle", "Edit User - Course Recovery System"); %>
+<jsp:include page="../includes/admin-header.jsp" %>
             <h2>Edit User</h2>
             <c:if test="${not empty error}">
                 <div class="error-message">${error}</div>
@@ -50,7 +34,4 @@
                 <button type="submit" class="btn btn-primary">Update User</button>
                 <a href="${pageContext.request.contextPath}/admin/users" class="btn btn-secondary">Cancel</a>
             </form>
-        </main>
-    </div>
-</body>
-</html>
+<jsp:include page="../includes/admin-footer.jsp" />
