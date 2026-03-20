@@ -44,8 +44,6 @@
                                 <thead>
                                     <tr>
                                         <th>Course Code</th>
-                                        <th>Course Title</th>
-                                        <th>Credit Hours</th>
                                         <th>Semester</th>
                                         <th>Year</th>
                                         <th>Attempt</th>
@@ -58,8 +56,6 @@
                                     <c:forEach var="grade" items="${grades}">
                                         <tr>
                                             <td>${grade.courseCode}</td>
-                                            <td>${grade.courseTitle}</td>
-                                            <td>${grade.creditHours}</td>
                                             <td>${grade.semester}</td>
                                             <td>${grade.year}</td>
                                             <td>${grade.attemptNo}</td>
