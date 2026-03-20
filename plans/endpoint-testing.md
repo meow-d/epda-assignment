@@ -11,10 +11,10 @@
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
 | `/login.jsp` | GET | ✅ PASS | Returns 200, login form renders correctly |
-| `/auth/login` | POST | | Not yet tested |
-| `/forgotPassword.jsp` | GET | | Not yet tested |
-| `/resetPassword.jsp` | GET | | Not yet tested |
-| `/css/style.css` | GET | | Not yet tested |
+| `/auth/login` | POST | ✅ PASS | Returns 302 redirect to /admin/ on success |
+| `/forgotPassword.jsp` | GET | ✅ PASS | Returns 200 |
+| `/resetPassword.jsp` | GET | ✅ PASS | Returns 200 |
+| `/css/style.css` | GET | ✅ PASS | Returns 200 |
 
 ---
 

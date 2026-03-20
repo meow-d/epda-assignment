@@ -15,14 +15,13 @@
     <div class="container">
         <header>
             <h1>Course Recovery System</h1>
-            <!-- DEBUG: role=${sessionScope.role}, currentPage=${currentPage} -->
             <nav>
                 <c:choose>
                     <c:when test="${sessionScope.role == 'admin'}">
                         <a href="${pageContext.request.contextPath}/admin/" ${currentPage == 'dashboard' ? 'class="active"' : ''}>Dashboard</a>
                         <a href="${pageContext.request.contextPath}/admin/users" ${currentPage == 'users' ? 'class="active"' : ''}>Manage Users</a>
                         <a href="${pageContext.request.contextPath}/admin/add-user" ${currentPage == 'add-user' ? 'class="active"' : ''}>Add User</a>
-                        <a href="${pageContext.request.contextPath}/officer/advanced-reports" ${currentPage == 'advanced-reports' ? 'class="active"' : ''}>Advanced Reports</a>
+                        <a href="${pageContext.request.contextPath}/admin/advanced-reports" ${currentPage == 'advanced-reports' ? 'class="active"' : ''}>Advanced Reports</a>
                         <a href="${pageContext.request.contextPath}/officer/recovery-plan" ${currentPage == 'recovery-plan' ? 'class="active"' : ''}>Recovery Plans</a>
                         <a href="${pageContext.request.contextPath}/officer/eligibility" ${currentPage == 'eligibility' ? 'class="active"' : ''}>Eligibility Check</a>
                         <a href="${pageContext.request.contextPath}/officer/academic-report" ${currentPage == 'academic-report' ? 'class="active"' : ''}>Academic Report</a>
