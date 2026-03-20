@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -124,11 +123,11 @@ public class OfficerServlet extends HttpServlet {
             request.setAttribute("students", students);
 
             request.getRequestDispatcher("/WEB-INF/officer/recoveryPlan.jsp").forward(request, response);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("========== [OfficerServlet] SQL ERROR in handleRecoveryPlan ==========");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
-            throw new ServletException("Database error in handleRecoveryPlan: " + e.getMessage(), e);
+            throw new ServletException("Error in handleRecoveryPlan: " + e.getMessage(), e);
         }
     }
 
@@ -155,11 +154,11 @@ public class OfficerServlet extends HttpServlet {
 
             request.setAttribute("eligibilityList", eligibilityList);
             request.getRequestDispatcher("/WEB-INF/officer/eligibility.jsp").forward(request, response);
-        } catch (SQLException e) {
-            System.err.println("========== [OfficerServlet] SQL ERROR in handleEligibility ==========");
+        } catch (Exception e) {
+            System.err.println("========== [OfficerServlet] ERROR in handleEligibility ==========");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
-            throw new ServletException("Database error in handleEligibility: " + e.getMessage(), e);
+            throw new ServletException("Error in handleEligibility: " + e.getMessage(), e);
         }
     }
 
@@ -184,11 +183,11 @@ public class OfficerServlet extends HttpServlet {
             request.setAttribute("students", students);
 
             request.getRequestDispatcher("/WEB-INF/officer/academicReport.jsp").forward(request, response);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("========== [OfficerServlet] SQL ERROR in handleAcademicReport ==========");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
-            throw new ServletException("Database error in handleAcademicReport: " + e.getMessage(), e);
+            throw new ServletException("Error in handleAcademicReport: " + e.getMessage(), e);
         }
     }
 
@@ -199,11 +198,11 @@ public class OfficerServlet extends HttpServlet {
             List<Student> students = StudentDAO.getAllStudents();
             request.setAttribute("students", students);
             request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("========== [OfficerServlet] SQL ERROR in handleListStudents ==========");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
-            throw new ServletException("Database error in handleListStudents: " + e.getMessage(), e);
+            throw new ServletException("Error in handleListStudents: " + e.getMessage(), e);
         }
     }
 
@@ -233,11 +232,11 @@ public class OfficerServlet extends HttpServlet {
             RecoveryDAO.addRecoveryPlan(recoveryPlan);
             System.out.println("[OfficerServlet] Recovery plan added successfully, redirecting...");
             response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + studentId);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("========== [OfficerServlet] SQL ERROR in handleAddRecoveryPlan ==========");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
-            throw new ServletException("Database error in handleAddRecoveryPlan: " + e.getMessage(), e);
+            throw new ServletException("Error in handleAddRecoveryPlan: " + e.getMessage(), e);
         }
     }
 
@@ -254,11 +253,11 @@ public class OfficerServlet extends HttpServlet {
             }
             System.out.println("[OfficerServlet] Recovery plan updated, redirecting...");
             response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + recoveryPlan.getStudentId());
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("========== [OfficerServlet] SQL ERROR in handleUpdateRecoveryPlan ==========");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
-            throw new ServletException("Database error in handleUpdateRecoveryPlan: " + e.getMessage(), e);
+            throw new ServletException("Error in handleUpdateRecoveryPlan: " + e.getMessage(), e);
         }
     }
 
@@ -271,11 +270,11 @@ public class OfficerServlet extends HttpServlet {
             RecoveryDAO.deleteRecoveryPlan(recoveryPlanId);
             System.out.println("[OfficerServlet] Recovery plan deleted, redirecting...");
             response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + studentId);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.err.println("========== [OfficerServlet] SQL ERROR in handleDeleteRecoveryPlan ==========");
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
-            throw new ServletException("Database error in handleDeleteRecoveryPlan: " + e.getMessage(), e);
+            throw new ServletException("Error in handleDeleteRecoveryPlan: " + e.getMessage(), e);
         }
     }
 

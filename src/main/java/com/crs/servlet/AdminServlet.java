@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet("/admin/*")
@@ -25,9 +26,15 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("========== [AdminServlet] doGet START ==========");
+        System.out.println("[AdminServlet] Request URI: " + request.getRequestURI());
+        System.out.println("[AdminServlet] Path Info: " + request.getPathInfo());
+        System.out.println("[AdminServlet] Session role: " + (request.getSession(false) != null ? request.getSession().getAttribute("role") : "null"));
+        
         // Authentication and authorization check
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("role") == null || !"admin".equals(session.getAttribute("role"))) {
+            System.out.println("[AdminServlet] Access denied - not admin, redirecting to login");
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
@@ -35,31 +42,41 @@ public class AdminServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null || path.equals("/")) {
+            System.out.println("[AdminServlet] Showing dashboard");
             showDashboard(request, response);
             return;
         }
 
         switch (path) {
             case "/users":
+                System.out.println("[AdminServlet] Handling /users");
                 handleListUsers(request, response);
                 break;
             case "/add-user":
+                System.out.println("[AdminServlet] Handling /add-user");
                 request.setAttribute("currentPage", "add-user");
                 request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
                 break;
             case "/edit-user":
+                System.out.println("[AdminServlet] Handling /edit-user");
                 handleEditUserForm(request, response);
                 break;
             default:
+                System.out.println("[AdminServlet] Unknown path: " + path + ", showing dashboard");
                 showDashboard(request, response);
         }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("========== [AdminServlet] doPost START ==========");
+        System.out.println("[AdminServlet] Request URI: " + request.getRequestURI());
+        System.out.println("[AdminServlet] Path Info: " + request.getPathInfo());
+        
         // Authentication and authorization check
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("role") == null || !"admin".equals(session.getAttribute("role"))) {
+            System.out.println("[AdminServlet] Access denied - not admin, redirecting to login");
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
@@ -67,46 +84,66 @@ public class AdminServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         if (path == null) {
-                response.sendRedirect(request.getContextPath() + "/admin/");
+            System.out.println("[AdminServlet] Path is null, redirecting to /admin/");
+            response.sendRedirect(request.getContextPath() + "/admin/");
             return;
         }
 
         switch (path) {
             case "/add-user":
+                System.out.println("[AdminServlet] Handling POST /add-user");
                 handleAddUser(request, response);
                 break;
             case "/update-user":
+                System.out.println("[AdminServlet] Handling POST /update-user");
                 handleUpdateUser(request, response);
                 break;
             case "/delete-user":
+                System.out.println("[AdminServlet] Handling POST /delete-user");
                 handleDeleteUser(request, response);
                 break;
             default:
-            response.sendRedirect(request.getContextPath() + "/admin/");
+                System.out.println("[AdminServlet] Unknown POST path: " + path + ", redirecting to /admin/");
+                response.sendRedirect(request.getContextPath() + "/admin/");
         }
     }
 
     private void showDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] showDashboard called");
         request.setAttribute("currentPage", "dashboard");
-        
+
         // Get analytics data
         try {
             var analytics = analyticsEJB.getSystemAnalytics();
+            System.out.println("[AdminServlet] Analytics loaded successfully");
             request.setAttribute("analytics", analytics);
         } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR loading analytics ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
             request.setAttribute("error", "Unable to load analytics: " + e.getMessage());
         }
-        
+
         request.getRequestDispatcher("/WEB-INF/admin/dashboard.jsp").forward(request, response);
     }
 
     private void handleListUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] handleListUsers called");
         try {
             List<User> users = UserDAO.getAllUsers();
+            System.out.println("[AdminServlet] Loaded " + users.size() + " users");
             request.setAttribute("users", users);
             request.setAttribute("currentPage", "users");
             request.getRequestDispatcher("/WEB-INF/admin/manageUsers.jsp").forward(request, response);
+        } catch (SQLException e) {
+            System.err.println("========== [AdminServlet] SQL ERROR in handleListUsers ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleListUsers: " + e.getMessage(), e);
         } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR in handleListUsers ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
             request.setAttribute("error", "Failed to load users: " + e.getMessage());
             request.setAttribute("currentPage", "users");
             request.getRequestDispatcher("/WEB-INF/admin/manageUsers.jsp").forward(request, response);
@@ -114,6 +151,7 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void handleAddUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] handleAddUser called");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String role = request.getParameter("role");
@@ -130,26 +168,31 @@ public class AdminServlet extends HttpServlet {
 
         // Check if any validation failed
         if (!usernameValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + usernameValidation.getErrorMessage());
             request.setAttribute("error", usernameValidation.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
             return;
         }
         if (!passwordValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + passwordValidation.getErrorMessage());
             request.setAttribute("error", passwordValidation.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
             return;
         }
         if (!emailValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + emailValidation.getErrorMessage());
             request.setAttribute("error", emailValidation.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
             return;
         }
         if (!roleValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + roleValidation.getErrorMessage());
             request.setAttribute("error", roleValidation.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
             return;
         }
         if (!statusValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + statusValidation.getErrorMessage());
             request.setAttribute("error", statusValidation.getErrorMessage());
             request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
             return;
@@ -164,14 +207,24 @@ public class AdminServlet extends HttpServlet {
             user.setStatus(status != null ? status.trim().toLowerCase() : "active");
 
             userEJB.addUser(user);
+            System.out.println("[AdminServlet] User added successfully, redirecting to /admin/users");
             response.sendRedirect(request.getContextPath() + "/admin/users");
+        } catch (SQLException e) {
+            System.err.println("========== [AdminServlet] SQL ERROR in handleAddUser ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleAddUser: " + e.getMessage(), e);
         } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR in handleAddUser ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
             request.setAttribute("error", "Failed to add user: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
         }
     }
 
     private void handleUpdateUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] handleUpdateUser called");
         String userIdStr = request.getParameter("id");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
@@ -182,6 +235,7 @@ public class AdminServlet extends HttpServlet {
         // Validate user ID
         ValidationUtil.ValidationResult userIdValidation = ValidationUtil.validateRequired(userIdStr, "User ID");
         if (!userIdValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + userIdValidation.getErrorMessage());
             request.setAttribute("error", userIdValidation.getErrorMessage());
             handleListUsers(request, response);
             return;
@@ -191,6 +245,7 @@ public class AdminServlet extends HttpServlet {
         try {
             userId = Integer.parseInt(userIdStr.trim());
         } catch (NumberFormatException e) {
+            System.err.println("[AdminServlet] Invalid user ID format: " + userIdStr);
             request.setAttribute("error", "Invalid user ID");
             handleListUsers(request, response);
             return;
@@ -210,26 +265,31 @@ public class AdminServlet extends HttpServlet {
 
         // Check if any validation failed
         if (!usernameValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + usernameValidation.getErrorMessage());
             request.setAttribute("error", usernameValidation.getErrorMessage());
             handleListUsers(request, response);
             return;
         }
         if (!emailValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + emailValidation.getErrorMessage());
             request.setAttribute("error", emailValidation.getErrorMessage());
             handleListUsers(request, response);
             return;
         }
         if (!roleValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + roleValidation.getErrorMessage());
             request.setAttribute("error", roleValidation.getErrorMessage());
             handleListUsers(request, response);
             return;
         }
         if (!statusValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + statusValidation.getErrorMessage());
             request.setAttribute("error", statusValidation.getErrorMessage());
             handleListUsers(request, response);
             return;
         }
         if (!passwordValidation.isValid()) {
+            System.out.println("[AdminServlet] Validation failed: " + passwordValidation.getErrorMessage());
             request.setAttribute("error", passwordValidation.getErrorMessage());
             handleListUsers(request, response);
             return;
@@ -247,41 +307,71 @@ public class AdminServlet extends HttpServlet {
                 user.setStatus(status.trim().toLowerCase());
 
                 UserDAO.updateUser(user);
+                System.out.println("[AdminServlet] User updated successfully, redirecting to /admin/users");
             }
             response.sendRedirect(request.getContextPath() + "/admin/users");
+        } catch (SQLException e) {
+            System.err.println("========== [AdminServlet] SQL ERROR in handleUpdateUser ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleUpdateUser: " + e.getMessage(), e);
         } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR in handleUpdateUser ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
             request.setAttribute("error", "Failed to update user: " + e.getMessage());
             handleListUsers(request, response);
         }
     }
 
     private void handleDeleteUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] handleDeleteUser called for userId: " + request.getParameter("id"));
         int userId = Integer.parseInt(request.getParameter("id"));
 
         try {
             UserDAO.deleteUser(userId);
+            System.out.println("[AdminServlet] User deleted successfully, redirecting to /admin/users");
             response.sendRedirect(request.getContextPath() + "/admin/users");
+        } catch (SQLException e) {
+            System.err.println("========== [AdminServlet] SQL ERROR in handleDeleteUser ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleDeleteUser: " + e.getMessage(), e);
         } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR in handleDeleteUser ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
             request.setAttribute("error", "Failed to delete user: " + e.getMessage());
             handleListUsers(request, response);
         }
     }
 
     private void handleEditUserForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] handleEditUserForm called for userId: " + request.getParameter("id"));
         int userId = Integer.parseInt(request.getParameter("id"));
 
         try {
             User user = UserDAO.getUserById(userId);
             if (user != null) {
+                System.out.println("[AdminServlet] User found: " + user.getUsername());
                 request.setAttribute("user", user);
                 request.setAttribute("currentPage", "users");
                 request.getRequestDispatcher("/WEB-INF/admin/editUser.jsp").forward(request, response);
             } else {
+                System.out.println("[AdminServlet] User not found: " + userId);
                 request.setAttribute("error", "User not found");
                 request.setAttribute("currentPage", "users");
                 handleListUsers(request, response);
             }
+        } catch (SQLException e) {
+            System.err.println("========== [AdminServlet] SQL ERROR in handleEditUserForm ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleEditUserForm: " + e.getMessage(), e);
         } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR in handleEditUserForm ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
             request.setAttribute("error", "Failed to load user: " + e.getMessage());
             request.setAttribute("currentPage", "users");
             handleListUsers(request, response);
