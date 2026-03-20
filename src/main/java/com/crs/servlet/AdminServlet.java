@@ -44,6 +44,7 @@ public class AdminServlet extends HttpServlet {
                 handleListUsers(request, response);
                 break;
             case "/add-user":
+                request.setAttribute("currentPage", "add-user");
                 request.getRequestDispatcher("/WEB-INF/admin/addUser.jsp").forward(request, response);
                 break;
             case "/edit-user":
@@ -86,130 +87,29 @@ public class AdminServlet extends HttpServlet {
     }
 
     private void showDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        String contextPath = request.getContextPath();
-
+        request.setAttribute("currentPage", "dashboard");
+        
         // Get analytics data
-        String analyticsHtml = "";
         try {
             var analytics = analyticsEJB.getSystemAnalytics();
-
-            analyticsHtml = "<div class='analytics-section'>" +
-                           "<h3>System Analytics</h3>" +
-                           "<div class='analytics-grid'>" +
-                           "<div class='metric-card'>" +
-                           "<h4>Total Students</h4>" +
-                           "<div class='metric-value'>" + analytics.get("totalStudents") + "</div>" +
-                           "</div>" +
-                           "<div class='metric-card'>" +
-                           "<h4>Eligible Students</h4>" +
-                           "<div class='metric-value'>" + analytics.get("eligibleStudents") + "</div>" +
-                           "</div>" +
-                           "<div class='metric-card'>" +
-                           "<h4>Ineligible Students</h4>" +
-                           "<div class='metric-value'>" + analytics.get("ineligibleStudents") + "</div>" +
-                           "</div>" +
-                           "<div class='metric-card'>" +
-                           "<h4>Active Recovery Plans</h4>" +
-                           "<div class='metric-value'>" + analytics.get("activeRecoveryPlans") + "</div>" +
-                           "</div>" +
-                           "<div class='metric-card'>" +
-                           "<h4>Recovery Success Rate</h4>" +
-                           "<div class='metric-value'>" + String.format("%.1f%%", analytics.get("recoverySuccessRate")) + "</div>" +
-                           "</div>" +
-                           "<div class='metric-card'>" +
-                           "<h4>Total Failed Courses</h4>" +
-                           "<div class='metric-value'>" + analytics.get("totalFailedCourses") + "</div>" +
-                           "</div>" +
-                           "</div>" +
-                           "</div>";
+            request.setAttribute("analytics", analytics);
         } catch (Exception e) {
-            analyticsHtml = "<div class='error-message'>Unable to load analytics: " + e.getMessage() + "</div>";
+            request.setAttribute("error", "Unable to load analytics: " + e.getMessage());
         }
-
-        String html = "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
-                      "<title>Admin Dashboard - Course Recovery System</title>" +
-                      "<link rel='stylesheet' href='" + contextPath + "/css/style.css'>" +
-                      "<style>" +
-                      ".analytics-section { margin: 2rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px; }" +
-                      ".analytics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }" +
-                      ".metric-card { background: white; padding: 1rem; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: center; }" +
-                      ".metric-card h4 { margin: 0 0 0.5rem 0; color: #666; font-size: 0.9rem; }" +
-                      ".metric-value { font-size: 2rem; font-weight: bold; color: #007bff; }" +
-                      "</style>" +
-                      "</head><body>" +
-                      "<div class='container'>" +
-                      "<header>" +
-                      "<h1>Course Recovery System</h1>" +
-                      "<nav>" +
-                      "<a href='" + contextPath + "/admin/' class='active'>Dashboard</a>" +
-                      "<a href='" + contextPath + "/admin/advanced-reports'>Advanced Reports</a>" +
-                      "<a href='" + contextPath + "/officer/recovery-plan'>Recovery Plans</a>" +
-                      "<a href='" + contextPath + "/officer/eligibility'>Eligibility Check</a>" +
-                      "<a href='" + contextPath + "/officer/academic-report'>Academic Report</a>" +
-                      "<a href='" + contextPath + "/admin/users'>Manage Users</a>" +
-                      "<a href='" + contextPath + "/auth/logout'>Logout</a>" +
-                      "</nav>" +
-                      "</header>" +
-                      "<main>" +
-                      "<h2>Admin Dashboard</h2>" +
-                      "<p>Welcome, Admin! Here's an overview of the system.</p>" +
-                      analyticsHtml +
-                      "<div class='dashboard'>" +
-                      "<div class='cards'>" +
-                      "<div class='card'>" +
-                      "<h3>Recovery Plans</h3>" +
-                      "<p>Manage student recovery plans and track progress.</p>" +
-                      "<a href='" + contextPath + "/officer/recovery-plan' class='btn btn-primary'>View Recovery Plans</a>" +
-                      "</div>" +
-                      "<div class='card'>" +
-                      "<h3>Eligibility Check</h3>" +
-                      "<p>Check student eligibility for course recovery.</p>" +
-                      "<a href='" + contextPath + "/officer/eligibility' class='btn btn-primary'>Check Eligibility</a>" +
-                      "</div>" +
-                      "<div class='card'>" +
-                      "<h3>Academic Reports</h3>" +
-                      "<p>Generate and send academic performance reports.</p>" +
-                      "<a href='" + contextPath + "/officer/academic-report' class='btn btn-primary'>View Reports</a>" +
-                      "</div>" +
-                      "<div class='card'>" +
-                      "<h3>Manage Users</h3>" +
-                      "<p>Manage system users, roles, and permissions.</p>" +
-                      "<a href='" + contextPath + "/admin/users' class='btn btn-primary'>Manage Users</a>" +
-                      "</div>" +
-                      "</div>" +
-                      "</div>" +
-                      "</main>" +
-                      "</div>" +
-                      "</body></html>";
-        response.getWriter().write(html);
+        
+        request.getRequestDispatcher("/WEB-INF/admin/dashboard.jsp").forward(request, response);
     }
 
     private void handleListUsers(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             List<User> users = UserDAO.getAllUsers();
-            response.setContentType("text/html");
-            StringBuilder html = new StringBuilder();
-            html.append("<!DOCTYPE html><html><head><title>Manage Users</title></head><body>");
-            html.append("<h1>Manage Users</h1>");
-            html.append("<table border='1'><tr><th>ID</th><th>Username</th><th>Role</th><th>Email</th><th>Status</th></tr>");
-
-            for (User user : users) {
-                html.append("<tr>")
-                    .append("<td>").append(user.getId()).append("</td>")
-                    .append("<td>").append(user.getUsername()).append("</td>")
-                    .append("<td>").append(user.getRole()).append("</td>")
-                    .append("<td>").append(user.getEmail()).append("</td>")
-                    .append("<td>").append(user.getStatus()).append("</td>")
-                    .append("</tr>");
-            }
-            html.append("</table>");
-            html.append("<p><a href='" + request.getContextPath() + "/admin/'>Back to Dashboard</a></p>");
-            html.append("</body></html>");
-            response.getWriter().write(html.toString());
+            request.setAttribute("users", users);
+            request.setAttribute("currentPage", "users");
+            request.getRequestDispatcher("/WEB-INF/admin/manageUsers.jsp").forward(request, response);
         } catch (Exception e) {
-            response.setContentType("text/html");
-            response.getWriter().write("<!DOCTYPE html><html><head><title>Error</title></head><body><h1>Error</h1><p>Failed to load users: " + e.getMessage() + "</p></body></html>");
+            request.setAttribute("error", "Failed to load users: " + e.getMessage());
+            request.setAttribute("currentPage", "users");
+            request.getRequestDispatcher("/WEB-INF/admin/manageUsers.jsp").forward(request, response);
         }
     }
 
@@ -374,13 +274,16 @@ public class AdminServlet extends HttpServlet {
             User user = UserDAO.getUserById(userId);
             if (user != null) {
                 request.setAttribute("user", user);
+                request.setAttribute("currentPage", "users");
                 request.getRequestDispatcher("/WEB-INF/admin/editUser.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "User not found");
+                request.setAttribute("currentPage", "users");
                 handleListUsers(request, response);
             }
         } catch (Exception e) {
             request.setAttribute("error", "Failed to load user: " + e.getMessage());
+            request.setAttribute("currentPage", "users");
             handleListUsers(request, response);
         }
     }

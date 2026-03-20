@@ -42,18 +42,11 @@
         <param-value>true</param-value>
     </context-param>
 
-    <!-- CRITICAL: Prevent JSF from processing servlet requests -->
-    <context-param>
-        <param-name>org.apache.myfaces.SKIP_JSF_FOR_REQUESTS</param-name>
-        <param-value>/admin/*,/officer/*,/auth/*</param-value>
-    </context-param>
-
     <!-- Ensure JSF uses CDI for bean resolution -->
     <context-param>
         <param-name>org.apache.myfaces.CDI_MANAGED_BEANS_ENABLED</param-name>
         <param-value>true</param-value>
     </context-param>
-
 
 
      <!-- Custom security filter handles authentication and authorization -->
@@ -68,34 +61,6 @@
          <filter-name>SecurityFilter</filter-name>
          <url-pattern>/*</url-pattern>
      </filter-mapping>
-
-    <!-- Explicit servlet mappings to ensure proper registration -->
-    <servlet>
-        <servlet-name>AdvancedReportServlet</servlet-name>
-        <servlet-class>com.crs.servlet.AdvancedReportServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AdvancedReportServlet</servlet-name>
-        <url-pattern>/admin/advanced-reports</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>OfficerServlet</servlet-name>
-        <servlet-class>com.crs.servlet.OfficerServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>OfficerServlet</servlet-name>
-        <url-pattern>/officer/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>AdminServlet</servlet-name>
-        <servlet-class>com.crs.servlet.AdminServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>AdminServlet</servlet-name>
-        <url-pattern>/admin/*</url-pattern>
-    </servlet-mapping>
 
     <context-param>
         <param-name>app.name</param-name>
