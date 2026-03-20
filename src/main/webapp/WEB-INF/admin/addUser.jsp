@@ -2,7 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <% request.setAttribute("currentPage", "add-user"); %>
 <% request.setAttribute("pageTitle", "Add User - Course Recovery System"); %>
-<jsp:include page="/WEB-INF/includes/header.jsp" %>
+<jsp:include page="/WEB-INF/includes/header.jsp" />
             <h2>Add New User</h2>
             <c:if test="${not empty error}">
                 <div class="error-message">${error}</div>

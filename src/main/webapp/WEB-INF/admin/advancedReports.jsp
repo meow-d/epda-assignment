@@ -17,7 +17,7 @@
     ".export-btn { margin-top: 1rem; }" +
     "@media (max-width: 768px) { .reports-container { grid-template-columns: 1fr; } }" +
     "</style>"); %>
-<jsp:include page="/WEB-INF/includes/header.jsp" %>
+<jsp:include page="/WEB-INF/includes/header.jsp" />
             <h2>Advanced Reports & Analytics</h2>
 
             <c:if test="${not empty error}">

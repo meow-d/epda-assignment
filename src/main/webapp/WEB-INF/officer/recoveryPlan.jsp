@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <% request.setAttribute("pageTitle", "Recovery Plan - Course Recovery System"); %>
-<jsp:include page="/WEB-INF/includes/header.jsp" %>
+<jsp:include page="/WEB-INF/includes/header.jsp" />
             <div class="recovery-plan">
                 <h2>Course Recovery Plans</h2>
                 <c:if test="${not empty error}">
