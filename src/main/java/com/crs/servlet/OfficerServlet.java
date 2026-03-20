@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -117,9 +118,9 @@ public class OfficerServlet extends HttpServlet {
             request.setAttribute("students", students);
 
             request.getRequestDispatcher("/WEB-INF/officer/recoveryPlan.jsp").forward(request, response);
-        } catch (Exception e) {
-            request.setAttribute("error", "Failed to load recovery plan: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Database error in handleRecoveryPlan", e);
         }
     }
 
@@ -145,9 +146,9 @@ public class OfficerServlet extends HttpServlet {
 
             request.setAttribute("eligibilityList", eligibilityList);
             request.getRequestDispatcher("/WEB-INF/officer/eligibility.jsp").forward(request, response);
-        } catch (Exception e) {
-            request.setAttribute("error", "Failed to load eligibility information: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Database error in handleEligibility", e);
         }
     }
 
@@ -171,9 +172,9 @@ public class OfficerServlet extends HttpServlet {
             request.setAttribute("students", students);
 
             request.getRequestDispatcher("/WEB-INF/officer/academicReport.jsp").forward(request, response);
-        } catch (Exception e) {
-            request.setAttribute("error", "Failed to load academic report: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Database error in handleAcademicReport", e);
         }
     }
 
@@ -183,9 +184,9 @@ public class OfficerServlet extends HttpServlet {
             List<Student> students = StudentDAO.getAllStudents();
             request.setAttribute("students", students);
             request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
-        } catch (Exception e) {
-            request.setAttribute("error", "Failed to load students: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Database error in handleListStudents", e);
         }
     }
 
@@ -212,10 +213,10 @@ public class OfficerServlet extends HttpServlet {
             recoveryPlan.setStatus("active");
 
             RecoveryDAO.addRecoveryPlan(recoveryPlan);
-            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/recovery-plan?studentId=" + studentId);
-        } catch (Exception e) {
-            request.setAttribute("error", "Failed to add recovery plan: " + e.getMessage());
-            // handleRecoveryPlan(request, response);
+            response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + studentId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Database error in handleAddRecoveryPlan", e);
         }
     }
 
@@ -229,10 +230,10 @@ public class OfficerServlet extends HttpServlet {
                 recoveryPlan.setStatus(status);
                 RecoveryDAO.updateRecoveryPlan(recoveryPlan);
             }
-            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/recovery-plan?studentId=" + recoveryPlan.getStudentId());
-        } catch (Exception e) {
-            request.setAttribute("error", "Failed to update recovery plan: " + e.getMessage());
-            handleRecoveryPlan(request, response);
+            response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + recoveryPlan.getStudentId());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Database error in handleUpdateRecoveryPlan", e);
         }
     }
 
@@ -242,10 +243,10 @@ public class OfficerServlet extends HttpServlet {
 
         try {
             RecoveryDAO.deleteRecoveryPlan(recoveryPlanId);
-            response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/recovery-plan?studentId=" + studentId);
-        } catch (Exception e) {
-            request.setAttribute("error", "Failed to delete recovery plan: " + e.getMessage());
-            handleRecoveryPlan(request, response);
+            response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + studentId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new ServletException("Database error in handleDeleteRecoveryPlan", e);
         }
     }
 
@@ -258,8 +259,8 @@ public class OfficerServlet extends HttpServlet {
             request.setAttribute("success", "Academic report sent successfully");
             handleAcademicReport(request, response);
         } catch (Exception e) {
-            request.setAttribute("error", "Failed to send report: " + e.getMessage());
-            handleAcademicReport(request, response);
+            e.printStackTrace();
+            throw new ServletException("Error in handleSendReport", e);
         }
     }
 }
