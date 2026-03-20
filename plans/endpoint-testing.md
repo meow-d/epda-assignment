@@ -22,14 +22,14 @@
 
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
-| `/admin/` | GET | | Not yet tested |
-| `/admin/users` | GET | | Not yet tested |
-| `/admin/add-user` | GET | | Not yet tested |
+| `/admin/` | GET | ✅ PASS | Returns 200, dashboard renders correctly |
+| `/admin/users` | GET | ✅ PASS | Returns 200 |
+| `/admin/add-user` | GET | ✅ PASS | Returns 200 |
 | `/admin/add-user` | POST | | Not yet tested |
 | `/admin/edit-user` | GET | | Not yet tested |
 | `/admin/update-user` | POST | | Not yet tested |
 | `/admin/delete-user` | POST | | Not yet tested |
-| `/admin/advanced-reports` | GET | | Not yet tested |
+| `/admin/advanced-reports` | GET | ✅ PASS | Returns 200 |
 
 ---
 
@@ -37,10 +37,10 @@
 
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
-| `/officer/` | GET | | Not yet tested |
-| `/officer/recovery-plan` | GET | | Not yet tested |
-| `/officer/eligibility` | GET | | Not yet tested |
-| `/officer/academic-report` | GET | | Not yet tested |
+| `/officer/` | GET | ✅ PASS | Returns 200 |
+| `/officer/recovery-plan` | GET | ✅ PASS | Returns 200 |
+| `/officer/eligibility` | GET | ✅ PASS | Returns 200, content renders correctly |
+| `/officer/academic-report` | GET | ✅ PASS | Returns 200 |
 | `/officer/add-recovery-plan` | POST | | Not yet tested |
 | `/officer/update-recovery-plan` | POST | | Not yet tested |
 | `/officer/delete-recovery-plan` | POST | | Not yet tested |
@@ -52,7 +52,7 @@
 
 | Endpoint | Method | Status | Notes |
 |----------|--------|--------|-------|
-| `/auth/logout` | GET/POST | | Not yet tested |
+| `/auth/logout` | GET | ✅ PASS | Returns 302 redirect to /login.jsp |
 
 ---
 
