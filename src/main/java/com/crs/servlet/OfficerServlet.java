@@ -23,6 +23,11 @@ public class OfficerServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("========== [OfficerServlet] doGet START ==========");
+        System.out.println("[OfficerServlet] Request URI: " + request.getRequestURI());
+        System.out.println("[OfficerServlet] Path Info: " + request.getPathInfo());
+        System.out.println("[OfficerServlet] Session role: " + (request.getSession(false) != null ? request.getSession().getAttribute("role") : "null"));
+        
         // Authentication and authorization check
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("role") == null ||
@@ -99,6 +104,7 @@ public class OfficerServlet extends HttpServlet {
     }
 
     private void handleRecoveryPlan(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[OfficerServlet] handleRecoveryPlan called");
         request.setAttribute("currentPage", "recovery-plan");
         String studentIdStr = request.getParameter("studentId");
 
@@ -119,12 +125,15 @@ public class OfficerServlet extends HttpServlet {
 
             request.getRequestDispatcher("/WEB-INF/officer/recoveryPlan.jsp").forward(request, response);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new ServletException("Database error in handleRecoveryPlan", e);
+            System.err.println("========== [OfficerServlet] SQL ERROR in handleRecoveryPlan ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleRecoveryPlan: " + e.getMessage(), e);
         }
     }
 
     private void handleEligibility(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[OfficerServlet] handleEligibility called");
         request.setAttribute("currentPage", "eligibility");
         try {
             List<Student> allStudents = StudentDAO.getAllStudents();
@@ -147,12 +156,15 @@ public class OfficerServlet extends HttpServlet {
             request.setAttribute("eligibilityList", eligibilityList);
             request.getRequestDispatcher("/WEB-INF/officer/eligibility.jsp").forward(request, response);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new ServletException("Database error in handleEligibility", e);
+            System.err.println("========== [OfficerServlet] SQL ERROR in handleEligibility ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleEligibility: " + e.getMessage(), e);
         }
     }
 
     private void handleAcademicReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[OfficerServlet] handleAcademicReport called");
         request.setAttribute("currentPage", "academic-report");
         String studentIdStr = request.getParameter("studentId");
 
@@ -173,24 +185,30 @@ public class OfficerServlet extends HttpServlet {
 
             request.getRequestDispatcher("/WEB-INF/officer/academicReport.jsp").forward(request, response);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new ServletException("Database error in handleAcademicReport", e);
+            System.err.println("========== [OfficerServlet] SQL ERROR in handleAcademicReport ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleAcademicReport: " + e.getMessage(), e);
         }
     }
 
     private void handleListStudents(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[OfficerServlet] handleListStudents called");
         request.setAttribute("currentPage", "dashboard");
         try {
             List<Student> students = StudentDAO.getAllStudents();
             request.setAttribute("students", students);
             request.getRequestDispatcher("/WEB-INF/officer/index.jsp").forward(request, response);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new ServletException("Database error in handleListStudents", e);
+            System.err.println("========== [OfficerServlet] SQL ERROR in handleListStudents ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleListStudents: " + e.getMessage(), e);
         }
     }
 
     private void handleAddRecoveryPlan(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[OfficerServlet] handleAddRecoveryPlan called");
         int studentId = Integer.parseInt(request.getParameter("studentId"));
         String courseCode = request.getParameter("courseCode");
         String task = request.getParameter("task");
@@ -213,14 +231,18 @@ public class OfficerServlet extends HttpServlet {
             recoveryPlan.setStatus("active");
 
             RecoveryDAO.addRecoveryPlan(recoveryPlan);
+            System.out.println("[OfficerServlet] Recovery plan added successfully, redirecting...");
             response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + studentId);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new ServletException("Database error in handleAddRecoveryPlan", e);
+            System.err.println("========== [OfficerServlet] SQL ERROR in handleAddRecoveryPlan ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleAddRecoveryPlan: " + e.getMessage(), e);
         }
     }
 
     private void handleUpdateRecoveryPlan(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[OfficerServlet] handleUpdateRecoveryPlan called");
         int recoveryPlanId = Integer.parseInt(request.getParameter("id"));
         String status = request.getParameter("status");
 
@@ -230,27 +252,35 @@ public class OfficerServlet extends HttpServlet {
                 recoveryPlan.setStatus(status);
                 RecoveryDAO.updateRecoveryPlan(recoveryPlan);
             }
+            System.out.println("[OfficerServlet] Recovery plan updated, redirecting...");
             response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + recoveryPlan.getStudentId());
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new ServletException("Database error in handleUpdateRecoveryPlan", e);
+            System.err.println("========== [OfficerServlet] SQL ERROR in handleUpdateRecoveryPlan ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleUpdateRecoveryPlan: " + e.getMessage(), e);
         }
     }
 
     private void handleDeleteRecoveryPlan(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[OfficerServlet] handleDeleteRecoveryPlan called");
         int recoveryPlanId = Integer.parseInt(request.getParameter("id"));
         int studentId = Integer.parseInt(request.getParameter("studentId"));
 
         try {
             RecoveryDAO.deleteRecoveryPlan(recoveryPlanId);
+            System.out.println("[OfficerServlet] Recovery plan deleted, redirecting...");
             response.sendRedirect(request.getContextPath() + "/officer/recovery-plan?studentId=" + studentId);
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new ServletException("Database error in handleDeleteRecoveryPlan", e);
+            System.err.println("========== [OfficerServlet] SQL ERROR in handleDeleteRecoveryPlan ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Database error in handleDeleteRecoveryPlan: " + e.getMessage(), e);
         }
     }
 
     private void handleSendReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[OfficerServlet] handleSendReport called");
         int studentId = Integer.parseInt(request.getParameter("studentId"));
 
         try {
@@ -259,8 +289,10 @@ public class OfficerServlet extends HttpServlet {
             request.setAttribute("success", "Academic report sent successfully");
             handleAcademicReport(request, response);
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServletException("Error in handleSendReport", e);
+            System.err.println("========== [OfficerServlet] ERROR in handleSendReport ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Error in handleSendReport: " + e.getMessage(), e);
         }
     }
 }
