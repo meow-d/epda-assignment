@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<% request.setAttribute("currentPage", "academic-report"); %>
 <% request.setAttribute("pageTitle", "Academic Report - Course Recovery System"); %>
 <jsp:include page="/WEB-INF/includes/header.jsp" />
             <div class="academic-report">

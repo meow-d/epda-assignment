@@ -51,12 +51,6 @@ public class OfficerServlet extends HttpServlet {
             case "/recovery-plan":
                 handleRecoveryPlan(request, response);
                 break;
-            case "/eligibility":
-                handleEligibility(request, response);
-                break;
-            case "/academic-report":
-                handleAcademicReport(request, response);
-                break;
             case "/students":
                 handleListStudents(request, response);
                 break;
@@ -128,66 +122,6 @@ public class OfficerServlet extends HttpServlet {
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
             throw new ServletException("Error in handleRecoveryPlan: " + e.getMessage(), e);
-        }
-    }
-
-    private void handleEligibility(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("[OfficerServlet] handleEligibility called");
-        request.setAttribute("currentPage", "eligibility");
-        try {
-            List<Student> allStudents = StudentDAO.getAllStudents();
-            List<Map<String, Object>> eligibilityList = new java.util.ArrayList<>();
-
-            for (Student student : allStudents) {
-                Map<String, Object> eligibilityInfo = new HashMap<>();
-                double cgpa = StudentDAO.calculateCGPA(student.getId());
-                int failedCourses = StudentDAO.getFailedCourseCount(student.getId());
-                boolean eligible = cgpa >= 2.0 && failedCourses <= 3;
-
-                eligibilityInfo.put("student", student);
-                eligibilityInfo.put("cgpa", cgpa);
-                eligibilityInfo.put("failedCourses", failedCourses);
-                eligibilityInfo.put("eligible", eligible);
-
-                eligibilityList.add(eligibilityInfo);
-            }
-
-            request.setAttribute("eligibilityList", eligibilityList);
-            request.getRequestDispatcher("/WEB-INF/officer/eligibility.jsp").forward(request, response);
-        } catch (Exception e) {
-            System.err.println("========== [OfficerServlet] ERROR in handleEligibility ==========");
-            System.err.println("Message: " + e.getMessage());
-            e.printStackTrace(System.err);
-            throw new ServletException("Error in handleEligibility: " + e.getMessage(), e);
-        }
-    }
-
-    private void handleAcademicReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("[OfficerServlet] handleAcademicReport called");
-        request.setAttribute("currentPage", "academic-report");
-        String studentIdStr = request.getParameter("studentId");
-
-        try {
-            if (studentIdStr != null && !studentIdStr.isEmpty()) {
-                int studentId = Integer.parseInt(studentIdStr);
-                Student student = StudentDAO.getStudentById(studentId);
-                List<Grade> grades = StudentDAO.getStudentGrades(studentId);
-                double cgpa = StudentDAO.calculateCGPA(studentId);
-
-                request.setAttribute("student", student);
-                request.setAttribute("grades", grades);
-                request.setAttribute("cgpa", cgpa);
-            }
-
-            List<Student> students = StudentDAO.getAllStudents();
-            request.setAttribute("students", students);
-
-            request.getRequestDispatcher("/WEB-INF/officer/academicReport.jsp").forward(request, response);
-        } catch (Exception e) {
-            System.err.println("========== [OfficerServlet] SQL ERROR in handleAcademicReport ==========");
-            System.err.println("Message: " + e.getMessage());
-            e.printStackTrace(System.err);
-            throw new ServletException("Error in handleAcademicReport: " + e.getMessage(), e);
         }
     }
 
@@ -286,7 +220,8 @@ public class OfficerServlet extends HttpServlet {
             com.crs.ejb.AcademicEJB academicEJB = new com.crs.ejb.AcademicEJB();
             academicEJB.sendAcademicReport(studentId);
             request.setAttribute("success", "Academic report sent successfully");
-            handleAcademicReport(request, response);
+            request.setAttribute("currentPage", "recovery-plan");
+            request.getRequestDispatcher("/WEB-INF/officer/recoveryPlan.jsp").forward(request, response);
         } catch (Exception e) {
             System.err.println("========== [OfficerServlet] ERROR in handleSendReport ==========");
             System.err.println("Message: " + e.getMessage());

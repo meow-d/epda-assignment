@@ -32,6 +32,7 @@ header h1 {
 
 header nav {
     display: flex;
+    justify-content: center;
     gap: 20px;
     padding-inline: 20px;
 }

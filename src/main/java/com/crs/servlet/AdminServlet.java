@@ -1,11 +1,13 @@
 package com.crs.servlet;
 
 import com.crs.dao.UserDAO;
+import com.crs.dao.StudentDAO;
 import com.crs.ejb.AnalyticsEJB;
 import com.crs.ejb.UserEJB;
+import com.crs.model.Grade;
+import com.crs.model.Student;
 import com.crs.model.User;
 import com.crs.util.ValidationUtil;
-
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,7 +17,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet("/admin/*")
 public class AdminServlet extends HttpServlet {
@@ -60,6 +64,14 @@ public class AdminServlet extends HttpServlet {
             case "/edit-user":
                 System.out.println("[AdminServlet] Handling /edit-user");
                 handleEditUserForm(request, response);
+                break;
+            case "/eligibility":
+                System.out.println("[AdminServlet] Handling /eligibility");
+                handleEligibility(request, response);
+                break;
+            case "/academic-report":
+                System.out.println("[AdminServlet] Handling /academic-report");
+                handleAcademicReport(request, response);
                 break;
             default:
                 System.out.println("[AdminServlet] Unknown path: " + path + ", showing dashboard");
@@ -375,6 +387,66 @@ public class AdminServlet extends HttpServlet {
             request.setAttribute("error", "Failed to load user: " + e.getMessage());
             request.setAttribute("currentPage", "users");
             handleListUsers(request, response);
+        }
+    }
+
+    private void handleEligibility(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] handleEligibility called");
+        request.setAttribute("currentPage", "eligibility");
+        try {
+            List<Student> allStudents = StudentDAO.getAllStudents();
+            List<Map<String, Object>> eligibilityList = new java.util.ArrayList<>();
+
+            for (Student student : allStudents) {
+                Map<String, Object> eligibilityInfo = new HashMap<>();
+                double cgpa = StudentDAO.calculateCGPA(student.getId());
+                int failedCourses = StudentDAO.getFailedCourseCount(student.getId());
+                boolean eligible = cgpa >= 2.0 && failedCourses <= 3;
+
+                eligibilityInfo.put("student", student);
+                eligibilityInfo.put("cgpa", cgpa);
+                eligibilityInfo.put("failedCourses", failedCourses);
+                eligibilityInfo.put("eligible", eligible);
+
+                eligibilityList.add(eligibilityInfo);
+            }
+
+            request.setAttribute("eligibilityList", eligibilityList);
+            request.getRequestDispatcher("/WEB-INF/admin/eligibility.jsp").forward(request, response);
+        } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR in handleEligibility ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Error in handleEligibility: " + e.getMessage(), e);
+        }
+    }
+
+    private void handleAcademicReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] handleAcademicReport called");
+        request.setAttribute("currentPage", "academic-report");
+        String studentIdStr = request.getParameter("studentId");
+
+        try {
+            if (studentIdStr != null && !studentIdStr.isEmpty()) {
+                int studentId = Integer.parseInt(studentIdStr);
+                Student student = StudentDAO.getStudentById(studentId);
+                List<Grade> grades = StudentDAO.getStudentGrades(studentId);
+                double cgpa = StudentDAO.calculateCGPA(studentId);
+
+                request.setAttribute("student", student);
+                request.setAttribute("grades", grades);
+                request.setAttribute("cgpa", cgpa);
+            }
+
+            List<Student> students = StudentDAO.getAllStudents();
+            request.setAttribute("students", students);
+
+            request.getRequestDispatcher("/WEB-INF/admin/academicReport.jsp").forward(request, response);
+        } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR in handleAcademicReport ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Error in handleAcademicReport: " + e.getMessage(), e);
         }
     }
 }
