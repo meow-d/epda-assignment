@@ -54,6 +54,17 @@ public class SecurityFilter implements Filter {
             return;
         }
 
+        // Redirect root path to appropriate dashboard based on role
+        if (path.equals("/") || path.isEmpty()) {
+            if ("officer".equals(role)) {
+                httpResponse.sendRedirect(httpRequest.getContextPath() + "/officer/");
+                return;
+            } else if ("admin".equals(role)) {
+                httpResponse.sendRedirect(httpRequest.getContextPath() + "/admin/");
+                return;
+            }
+        }
+
         // Officer-only areas (officer has full access to everything)
         if (path.startsWith("/officer/") && !"officer".equals(role)) {
             httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: Officer role required");
