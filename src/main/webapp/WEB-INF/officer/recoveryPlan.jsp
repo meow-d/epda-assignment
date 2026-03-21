@@ -85,6 +85,7 @@
                                             <td>${plan.status}</td>
                                             <td>
                                                 <form action="${pageContext.request.contextPath}/officer/update-recovery-plan" method="post" style="display:inline;">
+                                                    <input type="hidden" name="csrfToken" value="<%= com.crs.util.CSRFUtil.getToken(request) %>">
                                                     <input type="hidden" name="id" value="${plan.id}">
                                                     <select name="status">
                                                         <option value="active" ${plan.status == 'active' ? 'selected' : ''}>Active</option>
@@ -94,6 +95,7 @@
                                                     <button type="submit" class="btn btn-sm">Update</button>
                                                 </form>
                                                 <form action="${pageContext.request.contextPath}/officer/delete-recovery-plan" method="post" style="display:inline;">
+                                                    <input type="hidden" name="csrfToken" value="<%= com.crs.util.CSRFUtil.getToken(request) %>">
                                                     <input type="hidden" name="id" value="${plan.id}">
                                                     <input type="hidden" name="studentId" value="${student.id}">
                                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</button>
@@ -111,6 +113,7 @@
                         <div class="add-plan-form">
                             <h4>Add New Recovery Plan</h4>
                             <form action="${pageContext.request.contextPath}/officer/add-recovery-plan" method="post">
+                                <input type="hidden" name="csrfToken" value="<%= com.crs.util.CSRFUtil.getToken(request) %>">
                                 <input type="hidden" name="studentId" value="${student.id}">
                                 <div class="form-group">
                                     <label for="courseCode">Course Code:</label>
