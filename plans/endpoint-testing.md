@@ -30,6 +30,7 @@
 | `/admin/update-user` | POST | | Not yet tested |
 | `/admin/delete-user` | POST | | Not yet tested |
 | `/admin/advanced-reports` | GET | ✅ PASS | Returns 200, charts render with proper JSON data |
+| `/admin/export-csv` | GET | ✅ PASS | Downloads CSV file with analytics data |
 
 ---
 
@@ -86,6 +87,13 @@
 - **Error:** `Property [courseTitle] not found on type [com.crs.model.Grade]`
 - **Root Cause:** JSP referenced non-existent property on Grade model
 - **Fix:** Removed Course Title and Credit Hours columns from table
+- **Status:** ✅ FIXED
+
+### 2026-03-21 - CSV Export Not Implemented
+- **Endpoint:** `/admin/advanced-reports` (Export Data button)
+- **Error:** Alert message "CSV export functionality would be implemented here"
+- **Root Cause:** Placeholder code not implemented
+- **Fix:** Created ExportCsvServlet, added export buttons for all/system/academic data
 - **Status:** ✅ FIXED 
 
 ---
