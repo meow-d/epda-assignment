@@ -28,7 +28,7 @@
                                 <td>${user.email}</td>
                                 <td>${user.status}</td>
                                  <td>
-                                     <a href="${pageContext.request.contextPath}/admin/edit-user?id=${user.id}" class="btn btn-secondary btn-sm">Edit</a>
+                                     <a href="${pageContext.request.contextPath}/admin/edit-user?id=${user.id}" class="btn btn-secondary btn-sm" target="_blank">Edit</a>
                                      <form action="${pageContext.request.contextPath}/admin/delete-user" method="post" style="display:inline;">
                                          <input type="hidden" name="id" value="${user.id}">
                                          <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to deactivate this user?');">Deactivate</button>

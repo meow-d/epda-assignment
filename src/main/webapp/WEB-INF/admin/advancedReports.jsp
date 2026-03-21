@@ -134,8 +134,7 @@
 
     <script>
         // CGPA Distribution Chart
-        const cgpaData = ${academicAnalytics.cgpaDistribution != null ?
-            academicAnalytics.cgpaDistribution.entrySet().toString().replace('=', ':') : '{}'};
+        const cgpaData = ${cgpaDistributionJson != null ? cgpaDistributionJson : '{}'};
 
         new Chart(document.getElementById('cgpaChart'), {
             type: 'pie',
@@ -158,8 +157,7 @@
         });
 
         // Grade Distribution Chart
-        const gradeData = ${academicAnalytics.gradeDistribution != null ?
-            academicAnalytics.gradeDistribution.entrySet().toString().replace('=', ':') : '{}'};
+        const gradeData = ${gradeDistributionJson != null ? gradeDistributionJson : '{}'};
 
         new Chart(document.getElementById('gradeChart'), {
             type: 'bar',
@@ -183,8 +181,7 @@
         });
 
         // Failed Courses by Semester Chart
-        const failedCoursesData = ${academicAnalytics.failedCoursesBySemester != null ?
-            academicAnalytics.failedCoursesBySemester.entrySet().toString().replace('=', ':') : '{}'};
+        const failedCoursesData = ${failedCoursesBySemesterJson != null ? failedCoursesBySemesterJson : '{}'};
 
         new Chart(document.getElementById('failedCoursesChart'), {
             type: 'line',

@@ -160,6 +160,8 @@ form {
     cursor: pointer;
     text-decoration: none;
     font-size: 16px;
+    font-weight: bold;
+    line-height: 1.2;
     transition: background-color 0.3s;
 }
 

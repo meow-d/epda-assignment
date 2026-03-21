@@ -49,9 +49,6 @@
     </context-param>
 
 
-     <!-- Custom security filter handles authentication and authorization -->
-     <!-- Container-managed security disabled in favor of custom filter -->
-
      <filter>
          <filter-name>SecurityFilter</filter-name>
          <filter-class>com.crs.filter.SecurityFilter</filter-class>

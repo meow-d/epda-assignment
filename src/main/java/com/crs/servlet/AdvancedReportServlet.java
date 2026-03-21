@@ -3,6 +3,7 @@ package com.crs.servlet;
 import com.crs.ejb.AcademicEJB;
 import com.crs.ejb.AnalyticsEJB;
 import com.crs.model.Student;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -38,9 +39,21 @@ public class AdvancedReportServlet extends HttpServlet {
             // Get student data for detailed reports
             List<Student> allStudents = academicEJB.getAllStudents();
 
+            // Serialize maps to JSON for JavaScript consumption
+            ObjectMapper mapper = new ObjectMapper();
+            String cgpaDistributionJson = mapper.writeValueAsString(
+                academicAnalytics.get("cgpaDistribution"));
+            String gradeDistributionJson = mapper.writeValueAsString(
+                academicAnalytics.get("gradeDistribution"));
+            String failedCoursesBySemesterJson = mapper.writeValueAsString(
+                academicAnalytics.get("failedCoursesBySemester"));
+
             request.setAttribute("systemAnalytics", systemAnalytics);
             request.setAttribute("academicAnalytics", academicAnalytics);
             request.setAttribute("allStudents", allStudents);
+            request.setAttribute("cgpaDistributionJson", cgpaDistributionJson);
+            request.setAttribute("gradeDistributionJson", gradeDistributionJson);
+            request.setAttribute("failedCoursesBySemesterJson", failedCoursesBySemesterJson);
 
             request.getRequestDispatcher("/WEB-INF/admin/advancedReports.jsp").forward(request, response);
 
