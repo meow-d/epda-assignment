@@ -29,7 +29,7 @@
 | `/admin/edit-user` | GET | | Not yet tested |
 | `/admin/update-user` | POST | | Not yet tested |
 | `/admin/delete-user` | POST | | Not yet tested |
-| `/admin/advanced-reports` | GET | ✅ PASS | Returns 200 |
+| `/admin/advanced-reports` | GET | ✅ PASS | Returns 200, charts render with proper JSON data |
 
 ---
 
@@ -67,11 +67,26 @@
 
 ## Issues Found
 
-### [Date] - Issue Description
-- **Endpoint:** 
-- **Error:** 
-- **Root Cause:** 
-- **Status:** 
+### 2026-03-20 - Advanced Reports JavaScript Syntax Error
+- **Endpoint:** `/admin/advanced-reports`
+- **Error:** `Uncaught SyntaxError: expected expression, got '<'`
+- **Root Cause:** Java Map.toString().replace() produced invalid JavaScript syntax
+- **Fix:** Added Jackson dependency, serialize Maps to proper JSON in servlet
+- **Status:** ✅ FIXED
+
+### 2026-03-20 - Admin Nav Shows Wrong Advanced Reports URL
+- **Endpoint:** All officer pages accessed by admin
+- **Error:** Advanced Reports link pointed to `/officer/advanced-reports`
+- **Root Cause:** header.jsp had wrong URL for admin nav item
+- **Fix:** Changed to `/admin/advanced-reports`
+- **Status:** ✅ FIXED
+
+### 2026-03-20 - Academic Report Property Not Found
+- **Endpoint:** `/officer/academic-report`
+- **Error:** `Property [courseTitle] not found on type [com.crs.model.Grade]`
+- **Root Cause:** JSP referenced non-existent property on Grade model
+- **Fix:** Removed Course Title and Credit Hours columns from table
+- **Status:** ✅ FIXED 
 
 ---
 
