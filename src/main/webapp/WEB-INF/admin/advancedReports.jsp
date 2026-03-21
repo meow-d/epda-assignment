@@ -3,7 +3,7 @@
 <%@ page import="java.util.Map" %>
 <% request.setAttribute("currentPage", "advanced-reports"); %>
 <% request.setAttribute("pageTitle", "Advanced Reports - Course Recovery System"); %>
-<% request.setAttribute("customHead", "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>" + %>
+<% request.setAttribute("customHead", "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>"); %>
 <jsp:include page="/WEB-INF/includes/header.jsp" />
             <h2>Advanced Reports & Analytics</h2>
 
@@ -14,8 +14,8 @@
             <div class="export-btn">
                 <button onclick="window.print()" class="btn btn-secondary">Export as PDF</button>
                 <button onclick="exportToCSV()" class="btn btn-primary">Export All Data (CSV)</button>
-                <button onclick="exportToCSV('system')" class="btn btn-secondary">System Overview</button>
-                <button onclick="exportToCSV('academic')" class="btn btn-secondary">Academic Analytics</button>
+                <button onclick="exportToCSV('system')" class="btn btn-secondary">Export System Overview</button>
+                <button onclick="exportToCSV('academic')" class="btn btn-secondary">Export Academic Analytics</button>
             </div>
 
             <!-- System Overview -->
