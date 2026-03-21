@@ -31,11 +31,28 @@ public class SecurityFilter implements Filter {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         String path = httpRequest.getRequestURI().substring(httpRequest.getContextPath().length());
 
-        // Allow access to static resources, login page, and auth endpoints
+        // Allow access to static resources and auth endpoints (but not login.jsp)
         if (path.startsWith("/css/") || path.startsWith("/js/") || path.startsWith("/images/") ||
-            path.equals("/login.jsp") || path.startsWith("/auth/") ||
+            path.startsWith("/auth/") ||
             path.equals("/forgotPassword.jsp") || path.equals("/resetPassword.jsp") ||
             path.equals("/error.jsp")) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // Handle login.jsp - redirect logged-in users to their dashboard
+        if (path.equals("/login.jsp")) {
+            HttpSession session = httpRequest.getSession(false);
+            if (session != null && session.getAttribute("user") != null) {
+                String role = (String) session.getAttribute("role");
+                if ("officer".equals(role)) {
+                    httpResponse.sendRedirect(httpRequest.getContextPath() + "/officer/");
+                    return;
+                } else if ("admin".equals(role)) {
+                    httpResponse.sendRedirect(httpRequest.getContextPath() + "/admin/");
+                    return;
+                }
+            }
             chain.doFilter(request, response);
             return;
         }

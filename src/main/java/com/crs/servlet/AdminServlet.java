@@ -37,8 +37,15 @@ public class AdminServlet extends HttpServlet {
         
         // Authentication and authorization check
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("role") == null || !"admin".equals(session.getAttribute("role"))) {
-            System.out.println("[AdminServlet] Access denied - not admin, redirecting to login");
+        if (session == null || session.getAttribute("role") == null) {
+            System.out.println("[AdminServlet] No session, redirecting to login");
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        
+        String role = (String) session.getAttribute("role");
+        if (!"admin".equals(role) && !"officer".equals(role)) {
+            System.out.println("[AdminServlet] Access denied - role: " + role + ", redirecting to login");
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
@@ -87,8 +94,15 @@ public class AdminServlet extends HttpServlet {
         
         // Authentication and authorization check
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("role") == null || !"admin".equals(session.getAttribute("role"))) {
-            System.out.println("[AdminServlet] Access denied - not admin, redirecting to login");
+        if (session == null || session.getAttribute("role") == null) {
+            System.out.println("[AdminServlet] No session, redirecting to login");
+            response.sendRedirect(request.getContextPath() + "/login.jsp");
+            return;
+        }
+        
+        String role = (String) session.getAttribute("role");
+        if (!"admin".equals(role) && !"officer".equals(role)) {
+            System.out.println("[AdminServlet] Access denied - role: " + role + ", redirecting to login");
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
