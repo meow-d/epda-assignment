@@ -3,20 +3,7 @@
 <%@ page import="java.util.Map" %>
 <% request.setAttribute("currentPage", "advanced-reports"); %>
 <% request.setAttribute("pageTitle", "Advanced Reports - Course Recovery System"); %>
-<% request.setAttribute("customHead", 
-    "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>" +
-    "<style>" +
-    ".reports-container { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0; }" +
-    ".report-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }" +
-    ".report-card h3 { margin-top: 0; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 0.5rem; }" +
-    ".chart-container { position: relative; height: 300px; margin: 1rem 0; }" +
-    ".stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0; }" +
-    ".stat-item { text-align: center; padding: 1rem; background: #f8f9fa; border-radius: 6px; }" +
-    ".stat-value { font-size: 2rem; font-weight: bold; color: #007bff; display: block; }" +
-    ".stat-label { font-size: 0.9rem; color: #666; margin-top: 0.5rem; }" +
-    ".export-btn { margin-top: 1rem; }" +
-    "@media (max-width: 768px) { .reports-container { grid-template-columns: 1fr; } }" +
-    "</style>"); %>
+<% request.setAttribute("customHead", "<script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>" + %>
 <jsp:include page="/WEB-INF/includes/header.jsp" />
             <h2>Advanced Reports & Analytics</h2>
 
@@ -26,7 +13,9 @@
 
             <div class="export-btn">
                 <button onclick="window.print()" class="btn btn-secondary">Export as PDF</button>
-                <button onclick="exportToCSV()" class="btn btn-secondary">Export Data</button>
+                <button onclick="exportToCSV()" class="btn btn-primary">Export All Data (CSV)</button>
+                <button onclick="exportToCSV('system')" class="btn btn-secondary">System Overview</button>
+                <button onclick="exportToCSV('academic')" class="btn btn-secondary">Academic Analytics</button>
             </div>
 
             <!-- System Overview -->
@@ -205,9 +194,10 @@
         });
 
         // Export functionality
-        function exportToCSV() {
-            // Simple CSV export - in a real application, this would be more sophisticated
-            alert('CSV export functionality would be implemented here');
+        function exportToCSV(type) {
+            // Export analytics data to CSV
+            var exportType = type || 'all';
+            window.location.href = '${pageContext.request.contextPath}/admin/export-csv?type=' + exportType;
         }
     </script>
 <jsp:include page="/WEB-INF/includes/footer.jsp" />
