@@ -41,34 +41,6 @@ entity Grades {
   status : VARCHAR(20)
 }
 
-entity Milestones {
-  *id : INT <<PK>>
-  --
-  student_id : INT <<FK>>
-  course_code : VARCHAR(10) <<FK>>
-  title : VARCHAR(200)
-  description : TEXT
-  target_date : DATE
-  status : VARCHAR(20)
-  created_at : TIMESTAMP
-}
-
-entity ActionPlans {
-  *id : INT <<PK>>
-  --
-  milestone_id : INT <<FK>>
-  student_id : INT <<FK>>
-  course_code : VARCHAR(10) <<FK>>
-  task : TEXT
-  deadline : TIMESTAMP
-  status : VARCHAR(20)
-  grade : VARCHAR(5)
-  grade_point : DECIMAL(3,2)
-  progress_notes : TEXT
-  created_at : TIMESTAMP
-  updated_at : TIMESTAMP
-}
-
 entity RecoveryPlans {
   *id : INT <<PK>>
   --
@@ -94,14 +66,7 @@ entity PasswordResetTokens {
 Users ||..o{ PasswordResetTokens : "generates"
 Students ||..o{ Grades : "receives"
 Courses ||..o{ Grades : "has"
-Students ||..o{ Milestones : "assigned"
-Courses ||..o{ Milestones : "defines"
-Students ||..o{ ActionPlans : "assigned"
-Courses ||..o{ ActionPlans : "defines"
-Milestones ||..o{ ActionPlans : "contains"
 Students ||..o{ RecoveryPlans : "has"
 Courses ||..o{ RecoveryPlans : "defines"
-
-note bottom: RecoveryPlans\n(Legacy table for\nbackward compatibility)
 
 @enduml
