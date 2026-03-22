@@ -155,6 +155,50 @@ AnalyticsDAO handles aggregated reporting data: getSystemAnalytics, getCgpaDistr
 
 PasswordResetDAO handles token operations: saveToken, findToken, markAsUsed, and deleteExpiredTokens.
 
+## Conclusion
+
+The Course Recovery System demonstrates a practical implementation of Jakarta EE web application architecture for educational institutions. The system successfully addresses the core requirements of managing student academic performance and coordinating course recovery programs through a well-structured multi-tier architecture.
+
+### Key Achievements
+
+The application implements a clean separation of concerns across four distinct tiers. The Presentation Tier uses JSP for views and Servlets for controllers, with a Security Filter handling authentication and authorization centrally. The Business Tier encapsulates all business logic in Enterprise JavaBeans, providing transaction management and email notification services. The Data Access Tier uses the DAO pattern to abstract database operations, ensuring maintainability and testability. The Data Tier leverages MySQL with appropriate indexing for query performance.
+
+Security is implemented at multiple levels. Session-based authentication with BCrypt password hashing protects user credentials. CSRF token validation prevents cross-site request forgery attacks on all POST operations. Role-based access control ensures that admin users have access to user management and academic reporting while officer users have full system access including recovery plan management. The Security Filter intercepts all requests and enforces these policies consistently.
+
+The database design supports the three-attempt policy that is central to the recovery program. The composite primary key in the Grades table allows tracking of multiple attempts per course. The RecoveryPlans table provides a simple mechanism for officers to create and monitor recovery tasks. The PasswordResetTokens table enables secure password recovery with time-limited tokens.
+
+Email notifications keep students informed throughout their recovery journey. Automated messages are sent for account creation, password resets, recovery plan assignments, and academic report delivery. All email templates include relevant details such as course codes, deadlines, and task descriptions.
+
+### Technical Decisions
+
+The choice of Jakarta EE over newer frameworks like Spring Boot reflects the educational context and the need to demonstrate enterprise Java standards. The use of EJB for business logic provides automatic transaction demarcation without additional configuration. The DAO pattern was selected over JPA or Hibernate to maintain explicit control over SQL queries and demonstrate fundamental database access patterns.
+
+The decision to use PlantUML for all diagrams ensures consistency and maintainability. Diagrams can be regenerated whenever the source files change, and the text-based format works well with version control systems.
+
+### Limitations and Future Enhancements
+
+The current implementation has several areas for potential improvement. The user interface uses basic JSP with minimal CSS styling. A modern frontend framework like React or Vue.js could provide a more responsive user experience. The application lacks input validation on the client side, relying entirely on server-side validation.
+
+The recovery plan system uses a simple task-based approach. Future versions could implement the previously designed Milestones and ActionPlans tables for more granular tracking of student progress. Integration with student information systems via APIs would enable automatic grade imports and program enrollment verification.
+
+The email system uses synchronous sending, which blocks request processing. A message queue or scheduled job approach would improve responsiveness. Email templates are currently hardcoded in Java strings. External template files or a template engine like Thymeleaf would improve maintainability.
+
+The application does not implement audit logging for administrative actions. Adding an audit trail would help track user management changes and recovery plan modifications. Session management could be enhanced with remember-me functionality and multi-device session tracking.
+
+### Deployment Considerations
+
+Production deployment requires several configuration changes. The database connection pool should be tuned based on expected concurrent users. SMTP credentials must be configured with a production mail server. Session timeout values should balance security with user convenience. HTTPS should be enabled for all traffic, and the secure flag should be set on session cookies.
+
+Backup procedures should include daily database dumps and periodic verification of restore procedures. Log rotation prevents disk space exhaustion from application logs. Monitoring should track response times, error rates, and database connection pool utilization.
+
+### Summary
+
+The Course Recovery System provides a functional platform for managing student academic recovery programs. The architecture follows established Jakarta EE patterns and demonstrates proper separation of concerns. Security measures protect user data and prevent common web vulnerabilities. The database design supports the core business requirements of grade tracking and recovery plan management. Email notifications maintain communication with students throughout their recovery process.
+
+The system serves as a foundation that can be extended with additional features such as advanced analytics, mobile applications, or integration with institutional systems. The modular architecture allows individual components to be enhanced or replaced without affecting the overall system structure.
+
+---
+
 # Appendix
 
 ### Technology Stack
