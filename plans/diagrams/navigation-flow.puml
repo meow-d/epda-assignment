@@ -1,0 +1,56 @@
+@startuml navigation-flow
+title Course Recovery System - Navigation Flow
+
+start
+
+:Access Application;
+
+if (Authenticated?) then (No)
+  :Display login.jsp;
+  :User enters credentials;
+  :POST /auth/login;
+  if (Valid credentials?) then (Yes)
+    :Create session;
+    if (Role?) then (officer)
+      :Redirect to /officer/;
+    else (admin)
+      :Redirect to /admin/;
+    endif
+  else (No)
+    :Redirect to login.jsp?error=auth;
+  endif
+else (Yes)
+  if (Accessing /login.jsp?) then (Yes)
+    if (Role?) then (officer)
+      :Redirect to /officer/;
+    else (admin)
+      :Redirect to /admin/;
+    endif
+  else (No)
+    :Proceed to requested page;
+  endif
+endif
+
+split
+  :Admin Dashboard;
+  :Manage Users;
+  :Add User;
+  :Edit User;
+  :Advanced Reports;
+  :Eligibility Check;
+  :Academic Report;
+split again
+  :Officer Dashboard;
+  :Recovery Plans;
+  :Create Milestone;
+  :Create Action Plan;
+  :Update Progress;
+end split
+
+:Logout;
+:Destroy session;
+:Redirect to login.jsp;
+
+stop
+
+@enduml

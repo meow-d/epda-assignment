@@ -1,0 +1,45 @@
+@startuml login-flow
+title Login Authentication Flow
+
+participant "User" as User
+participant "Browser" as Browser
+participant "SecurityFilter" as Filter
+participant "LoginJSP" as LoginJSP
+participant "AuthServlet" as AuthServlet
+participant "UserEJB" as UserEJB
+participant "UserDAO" as UserDAO
+participant "Database" as DB
+
+User -> Browser : Navigate to /login.jsp
+Browser -> Filter : GET /login.jsp
+Filter -> Filter : Check session
+Filter -> LoginJSP : Allow (not logged in)
+LoginJSP -> Browser : Render login form + CSRF token
+Browser -> User : Display login page
+
+User -> Browser : Enter credentials + Submit
+Browser -> Filter : POST /auth/login
+Filter -> Filter : Validate CSRF token
+Filter -> AuthServlet : Forward request
+AuthServlet -> UserEJB : authenticate(username, password)
+UserEJB -> UserDAO : findByUsername(username)
+UserDAO -> DB : SELECT * FROM Users
+DB --> UserDAO : User record
+UserDAO --> UserEJB : User object
+UserEJB -> UserEJB : Verify password (BCrypt)
+UserEJB --> AuthServlet : User object (if valid)
+
+alt Authentication Successful
+    AuthServlet -> AuthServlet : Create session + store user/role
+    AuthServlet --> Browser : 302 Redirect (based on role)
+    Browser -> Filter : GET /admin/ or /officer/
+    Filter -> Filter : Validate session + role
+    Filter --> Dashboard : Allow access
+    Dashboard --> Browser : Render dashboard
+    Browser --> User : Display dashboard
+else Authentication Failed
+    AuthServlet --> Browser : 302 Redirect to /login.jsp?error=auth
+    Browser --> User : Display error message
+end
+
+@enduml

@@ -1,0 +1,43 @@
+sequenceDiagram
+    title Create Recovery Plan Flow
+    
+    participant Officer
+    participant Browser
+    participant SecurityFilter
+    participant OfficerServlet
+    participant RecoveryEJB
+    participant RecoveryDAO
+    participant Database
+    participant EmailUtil
+    participant SMTP
+    
+    Officer->>Browser: Navigate to Recovery Plans
+    Browser->>SecurityFilter: GET /officer/recovery-plan
+    SecurityFilter->>SecurityFilter: Validate session + role
+    SecurityFilter->>OfficerServlet: Forward request
+    OfficerServlet->>RecoveryDAO: getAllRecoveryPlans()
+    RecoveryDAO->>Database: SELECT * FROM RecoveryPlans
+    Database-->>RecoveryDAO: Recovery plans
+    RecoveryDAO-->>OfficerServlet: List<RecoveryPlan>
+    OfficerServlet-->>Browser: Render recoveryPlan.jsp
+    Browser-->>Officer: Display recovery plans
+    
+    Officer->>Browser: Fill add plan form + Submit
+    Browser->>SecurityFilter: POST /officer/add-recovery-plan
+    SecurityFilter->>SecurityFilter: Validate CSRF token
+    SecurityFilter->>OfficerServlet: Forward request
+    OfficerServlet->>OfficerServlet: Extract parameters
+    OfficerServlet->>RecoveryEJB: createRecoveryPlan(studentId, courseCode, task, deadline)
+    RecoveryEJB->>RecoveryDAO: save(recoveryPlan)
+    RecoveryDAO->>Database: INSERT INTO RecoveryPlans
+    Database-->>RecoveryDAO: Generated ID
+    RecoveryDAO-->>RecoveryEJB: RecoveryPlan with ID
+    RecoveryEJB->>RecoveryEJB: sendRecoveryPlanEmail()
+    RecoveryEJB->>EmailUtil: sendEmail(to, subject, body)
+    EmailUtil->>SMTP: Send email via SMTP
+    SMTP-->>EmailUtil: Email sent
+    RecoveryEJB-->>OfficerServlet: RecoveryPlan created
+    OfficerServlet-->>Browser: 302 Redirect to /officer/recovery-plan
+    Browser->>SecurityFilter: GET /officer/recovery-plan
+    SecurityFilter-->>Browser: Render updated page
+    Browser-->>Officer: Display success message + updated list

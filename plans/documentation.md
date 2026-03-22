@@ -1,371 +1,640 @@
-# Course Recovery System Design Document
+# Course Recovery System - Technical Documentation
 
-## Cover Page
+## Overview of Application
 
-Course Recovery System Design Document
+### Brief Description of System Architecture
 
-Prepared by: EPDA Assignment Group
+The Course Recovery System is a web-based application built using **Jakarta EE** technologies for managing student academic performance and course recovery programs. The system follows a **multi-tier architecture** pattern with clear separation of concerns across presentation, business, data access, and data tiers.
 
-Date: January 23, 2026
+#### Key Architectural Features
 
-## Table of Contents
+- **Presentation Tier**: JSP pages for views, Servlets for controllers, and Filters for cross-cutting concerns
+- **Business Tier**: Enterprise JavaBeans (EJB) for business logic and email notifications
+- **Data Access Tier**: Data Access Objects (DAO) for database operations
+- **Data Tier**: MySQL relational database
+- **Security**: Role-based access control with CSRF protection
 
-1. Introduction
-2. System Architecture Overview
-3. Web Components Design
-4. Business Tier Design
-5. Database Design
-6. System Navigation
-7. UML Diagrams
-8. Additional Features
-9. Screen Captures
-10. References
+### System Architecture Diagram
 
-## Introduction
+![System Architecture](diagrams/architecture.png)
 
-The Course Recovery System is a web-based application designed to help educational institutions manage student course recovery processes. The system allows course administrators and academic officers to create recovery plans, set milestones, track progress, and monitor student eligibility for course progression. Students can view their recovery plans and track their progress toward academic recovery goals. The application follows a three-tier architecture with presentation, business, and database tiers implemented using Java Enterprise Edition technologies.
+*Figure 1: System Architecture - Shows the four-tier architecture with external services*
 
-## System Architecture Overview
+### Tier Interconnection
 
-The Course Recovery System implements a three-tier architecture consisting of presentation, business, and database tiers. The presentation tier uses JavaServer Pages for rendering web interfaces and servlets for handling HTTP requests and responses \cite{apache-tomcat-docs}. The business tier employs Enterprise JavaBeans for implementing business logic, transaction management, and data processing \cite{oracle-javaee-tutorial}. The database tier uses MySQL for persistent data storage with JDBC for data access operations \cite{mysql-refman}.
+![Tier Interconnection](diagrams/tier-interconnection.png)
 
-The presentation tier communicates with the business tier through EJB method invocations, while the business tier accesses the database tier through DAO classes that encapsulate SQL operations. This layered architecture ensures separation of concerns, maintainability, and scalability of the system. Security is implemented through custom filters that enforce role-based access control and protect against common web vulnerabilities such as cross-site request forgery \cite{owasp-cheatsheet}.
+*Figure 2: Tier Interconnection - Details the flow of requests through each tier*
 
-## Web Components Design
+The application flows through these tiers as follows:
 
-The web components of the Course Recovery System are implemented using JavaServer Pages and servlets running on Apache Tomcat. The presentation tier consists of multiple JSP pages for different user roles and functionalities. Admin users have access to user management, system analytics, and advanced reporting pages. Academic officers can manage recovery plans, check student eligibility, and generate academic reports. All users can access login, password reset, and profile management features.
+1. **Client Request** → Security Filter intercepts all requests
+2. **Security Filter** → Validates authentication and authorization
+3. **Servlet** → Processes request, invokes business logic
+4. **EJB** → Executes business rules, sends notifications
+5. **DAO** → Performs CRUD operations on database
+6. **Database** → Persists and retrieves data
+7. **Response** → JSP renders view, returns to client
 
-Servlets handle HTTP requests and coordinate with the business tier through EJB method calls. The AdminServlet manages administrative functions such as user CRUD operations and system analytics. The OfficerServlet handles academic officer responsibilities including recovery plan management and eligibility checking. The AuthServlet manages authentication and authorization processes. Custom security filters intercept all requests to enforce access control and implement security headers.
+---
 
-JSP pages use JSTL tags for conditional rendering and data iteration. Forms include client-side validation using HTML5 attributes and JavaScript for enhanced user experience. The system implements responsive design principles to ensure compatibility across different devices and screen sizes.
+## Design of Web Components
 
-## Business Tier Design
+### Web Component Technologies
 
-The business tier is implemented using stateless Enterprise JavaBeans that provide transaction management and business logic encapsulation. The RecoveryEJB handles all recovery plan related operations including creating milestones, action plans, and progress tracking. The AcademicEJB manages academic operations such as eligibility checking, CGPA calculation, and grade management. The UserEJB handles user authentication, authorization, and account management functions.
+The application utilizes **Jakarta Servlet** and **JavaServer Pages (JSP)** technologies for web component implementation.
 
-The AnalyticsEJB provides statistical analysis and reporting capabilities for system administrators. Each EJB uses container-managed transactions to ensure data consistency and integrity. Business logic is separated from presentation concerns, allowing for independent testing and maintenance of each layer.
+#### Servlets
 
-The EJBs interact with data access objects that encapsulate database operations. This design ensures that business rules are consistently applied across all system operations and provides a clear separation between business logic and data persistence concerns.
+Servlets serve as the **controller** components in the MVC pattern, handling HTTP requests and coordinating between the view and business layers.
+
+| Servlet | URL Pattern | Purpose |
+|---------|-------------|---------|
+| `AuthServlet` | `/auth/*` | User authentication, login, logout, password reset |
+| `AdminServlet` | `/admin/*` | User management, eligibility checks, academic reports |
+| `OfficerServlet` | `/officer/*` | Recovery plan management |
+| `AdvancedReportServlet` | `/admin/advanced-reports` | Analytics dashboard |
+| `ExportCsvServlet` | `/admin/export-csv` | CSV data export |
+
+**Servlet Implementation Pattern:**
+```java
+@WebServlet("/admin/*")
+public class AdminServlet extends HttpServlet {
+    private UserEJB userEJB = new UserEJB();
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        // Session validation
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("role") == null) {
+            response.sendRedirect("/login.jsp");
+            return;
+        }
+        
+        // Request routing based on path
+        String path = request.getPathInfo();
+        switch (path) {
+            case "/users": handleListUsers(request, response); break;
+            case "/eligibility": handleEligibility(request, response); break;
+            // ... more cases
+        }
+    }
+}
+```
+
+#### JavaServer Pages (JSP)
+
+JSP pages serve as the **view** layer, using JSTL tags for dynamic content rendering. All JSPs are stored under `/WEB-INF/` for direct access prevention.
+
+**JSP Organization:**
+
+```
+/WEB-INF/
+├── admin/           # Admin role pages
+│   ├── index.jsp           # Dashboard
+│   ├── manageUsers.jsp     # User listing
+│   ├── addUser.jsp         # Add user form
+│   ├── editUser.jsp        # Edit user form
+│   ├── advancedReports.jsp # Analytics dashboard
+│   ├── eligibility.jsp     # Eligibility checker
+│   └── academicReport.jsp  # Academic performance report
+├── officer/         # Officer role pages
+│   ├── index.jsp           # Dashboard
+│   └── recoveryPlan.jsp    # Recovery plan management
+├── includes/        # Reusable components
+│   ├── header.jsp          # Navigation header
+│   └── footer.jsp          # Site footer
+└── lib/             # JAR libraries
+```
+
+**JSP Include Pattern:**
+```jsp
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<% request.setAttribute("currentPage", "dashboard"); %>
+<jsp:include page="/WEB-INF/includes/header.jsp" />
+
+<!-- Page content -->
+<div class="container">
+    <h2>${pageTitle}</h2>
+    <c:forEach var="item" items="${items}">
+        <p>${item.name}</p>
+    </c:forEach>
+</div>
+
+<jsp:include page="/WEB-INF/includes/footer.jsp" />
+```
+
+#### Filters
+
+The `SecurityFilter` implements cross-cutting concerns for security:
+
+- **Authentication**: Validates user session
+- **Authorization**: Role-based access control
+- **CSRF Protection**: Token validation for POST requests
+- **Session Management**: Redirects logged-in users appropriately
+
+**Filter Configuration:**
+```java
+@WebFilter("/*")
+public class SecurityFilter implements Filter {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, 
+                         FilterChain chain) throws IOException, ServletException {
+        String path = httpRequest.getRequestURI().substring(contextPath.length());
+        
+        // Allow static resources
+        if (path.startsWith("/css/") || path.startsWith("/auth/")) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
+        // Redirect logged-in users from login.jsp
+        if (path.equals("/login.jsp") && session.getAttribute("user") != null) {
+            httpResponse.sendRedirect(getDashboardForRole(role));
+            return;
+        }
+        
+        // Validate authentication and authorization
+        // ...
+    }
+}
+```
+
+### Component Diagram
+
+![Component Diagram](diagrams/components.png)
+
+*Figure 3: Component Diagram - Shows web components, servlets, EJBs, and DAOs*
+
+---
+
+## Web Page Design
+
+### General Navigation Chart
+
+The application implements role-based navigation with two distinct user roles:
+
+- **Admin**: Limited access to user management and reports
+- **Officer**: Full access to all features including recovery plans
+
+![Navigation Flow](diagrams/navigation-flow.png)
+
+*Figure 4: Navigation Flow - Shows page navigation for both admin and officer roles*
+
+### Page Descriptions
+
+#### Public Pages (No Authentication Required)
+
+| Page | Path | Description |
+|------|------|-------------|
+| Login | `/login.jsp` | User authentication with CSRF protection |
+| Forgot Password | `/forgotPassword.jsp` | Password reset request form |
+| Reset Password | `/resetPassword.jsp` | Password reset with token validation |
+| Error | `/error.jsp` | Generic error display page |
+
+#### Admin Pages (Admin Role)
+
+| Page | Path | Description |
+|------|------|-------------|
+| Dashboard | `/admin/` | System overview with quick statistics |
+| Manage Users | `/admin/users` | User listing with edit/delete actions |
+| Add User | `/admin/add-user` | New user creation form |
+| Edit User | `/admin/edit-user` | User modification form |
+| Advanced Reports | `/admin/advanced-reports` | Analytics dashboard with charts |
+| Eligibility Check | `/admin/eligibility` | Student eligibility for recovery program |
+| Academic Report | `/admin/academic-report` | Individual student academic performance |
+
+#### Officer Pages (Officer Role)
+
+| Page | Path | Description |
+|------|------|-------------|
+| Dashboard | `/officer/` | Student list with recovery plan status |
+| Recovery Plans | `/officer/recovery-plan` | Create and manage recovery plans, milestones, action plans |
+
+### Authentication Flow
+
+![Login Flow](diagrams/login-flow.png)
+
+*Figure 5: Login Authentication Flow - Sequence diagram showing the login process*
+
+---
+
+## Design of Business Tier
+
+### Business Tier Technologies
+
+The business tier is implemented using **Enterprise JavaBeans (EJB)**, providing:
+
+- **Transaction Management**: Automatic transaction demarcation
+- **Business Logic Encapsulation**: Clean separation from presentation layer
+- **Email Notifications**: Integrated email service for user communications
+- **Dependency Injection**: Loose coupling between components
+
+### EJB Components
+
+#### UserEJB - User Management
+
+**Responsibilities:**
+- User authentication with BCrypt password verification
+- User CRUD operations
+- Password reset token management
+- Email notifications for account events
+
+**Key Methods:**
+```java
+public class UserEJB {
+    public User authenticate(String username, String password) throws SQLException;
+    public User createUser(String username, String password, String role, String email) throws SQLException;
+    public boolean requestPasswordReset(String email) throws SQLException;
+    public boolean resetPasswordWithToken(String token, String newPassword) throws SQLException;
+    private void sendWelcomeEmail(String email, String username);
+    private void sendDeactivationEmail(String email, String username);
+}
+```
+
+#### AcademicEJB - Academic Operations
+
+**Responsibilities:**
+- Student academic performance calculation
+- Grade management and CGPA computation
+- Eligibility determination for recovery program
+- Academic report generation and email delivery
+
+**Key Methods:**
+```java
+public class AcademicEJB {
+    public double calculateCGPA(int studentId) throws SQLException;
+    public boolean isEligibleForRecovery(int studentId) throws SQLException;
+    public List<Grade> getStudentGrades(int studentId) throws SQLException;
+    public void sendAcademicReport(int studentId) throws SQLException;
+    public boolean canAttemptCourse(int studentId, String courseCode) throws SQLException;
+}
+```
+
+#### RecoveryEJB - Recovery Plan Management
+
+**Responsibilities:**
+- Recovery plan creation and management
+- Milestone tracking
+- Action plan coordination
+- Progress monitoring and notifications
+
+**Key Methods:**
+```java
+public class RecoveryEJB {
+    public RecoveryPlan createRecoveryPlan(int studentId, String courseCode, 
+                                           String task, LocalDateTime deadline) throws SQLException;
+    public Milestone createMilestone(int studentId, String courseCode, 
+                                     String title, LocalDate targetDate) throws SQLException;
+    public ActionPlan createActionPlan(int milestoneId, String task, 
+                                       LocalDateTime deadline) throws SQLException;
+    public void updateMilestoneStatus(int milestoneId, String status) throws SQLException;
+    private void sendRecoveryPlanEmail(RecoveryPlan plan) throws SQLException;
+    private void sendMilestoneEmail(Milestone milestone) throws SQLException;
+}
+```
+
+#### AnalyticsEJB - Analytics and Reporting
+
+**Responsibilities:**
+- System-wide analytics aggregation
+- CGPA distribution calculation
+- Grade distribution analysis
+- Failed courses tracking by semester
+- CSV export data preparation
+
+**Key Methods:**
+```java
+public class AnalyticsEJB {
+    public Map<String, Object> getSystemAnalytics() throws SQLException;
+    public Map<String, Object> getAcademicAnalytics() throws SQLException;
+    public Map<String, Integer> getCgpaDistribution() throws SQLException;
+    public Map<String, Integer> getGradeDistribution() throws SQLException;
+    public Map<String, Integer> getFailedCoursesBySemester() throws SQLException;
+}
+```
+
+### Email Notification System
+
+The application sends automated email notifications for:
+
+1. **User Account Management**
+   - Welcome emails for new accounts
+   - Account deactivation notices
+
+2. **Password & Recovery Management**
+   - Password reset requests with secure tokens
+   - Password reset confirmations
+
+3. **Course Recovery**
+   - Recovery plan creation notifications
+   - Milestone assignments
+   - Action plan assignments
+   - Progress updates
+
+4. **Academic Performance Reports**
+   - Semester grade reports
+   - CGPA summaries
+
+**Email Configuration:**
+```properties
+MAIL_SMTP_HOST=smtp.example.com
+MAIL_SMTP_PORT=587
+MAIL_SMTP_USERNAME=user@example.com
+MAIL_SMTP_PASSWORD=secret
+MAIL_SMTP_AUTH=true
+MAIL_SMTP_STARTTLS_ENABLE=true
+```
+
+### Recovery Plan Creation Flow
+
+![Recovery Plan Flow](diagrams/recovery-plan-flow.png)
+
+*Figure 7: Recovery Plan Creation Flow - Sequence diagram showing the process of creating a recovery plan*
+
+---
 
 ## Database Design
 
-The database tier uses MySQL to store all system data with a normalized relational schema. The Users table stores system users with roles for access control. The Students table contains student information including academic performance data. The Courses table maintains course catalog information. The Grades table tracks student performance across different course attempts. The RecoveryPlans table stores legacy recovery plan data.
+### Database Schema
 
-Enhanced tables include Milestones for high-level recovery goals and ActionPlans for detailed recovery tasks. The PasswordResetTokens table securely manages password reset operations. Indexes are created on frequently queried columns to optimize performance. Foreign key constraints ensure referential integrity across related tables.
+The application uses **MySQL** as the relational database management system. The database `crs_db` contains the following tables:
 
-Data access is performed through DAO classes that use JDBC prepared statements to prevent SQL injection attacks. Connection pooling is implemented for efficient resource management. The database design supports the three-attempt course retrieval policy through attempt tracking in the grades table.
+### Tables Description
 
-## System Navigation
+#### Users
 
-The application provides role-based navigation with different interfaces for administrators, academic officers, and students. Administrators access the system through a dashboard showing system analytics and user management tools. Academic officers navigate to recovery plan management, eligibility checking, and academic reporting features. All users start at the login page and can access password reset functionality.
+Stores system user accounts (admins and officers).
 
-Navigation is implemented through server-side redirects and JSP includes for consistent header and footer content. Session management tracks user authentication state and role information. The system prevents unauthorized access through security filters that validate user permissions on each request.
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique user identifier |
+| username | VARCHAR(50) | UNIQUE, NOT NULL | Login username |
+| password | VARCHAR(255) | NOT NULL | BCrypt hashed password |
+| role | VARCHAR(20) | NOT NULL | User role: 'admin' or 'officer' |
+| email | VARCHAR(100) | UNIQUE, NOT NULL | User email address |
+| status | VARCHAR(20) | DEFAULT 'active' | Account status |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Account creation date |
 
-## UML Diagrams
+#### Students
 
-### Class Diagram
+Stores student information.
 
-```mermaid
-classDiagram
-    class User {
-        -int id
-        -String username
-        -String password
-        -String role
-        -String email
-        -String status
-        +authenticate()
-        +updatePassword()
-    }
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique student identifier |
+| name | VARCHAR(100) | NOT NULL | Student full name |
+| program | VARCHAR(100) | NOT NULL | Academic program |
+| email | VARCHAR(100) | UNIQUE, NOT NULL | Student email address |
+| current_cgpa | DECIMAL(3,2) | DEFAULT 0.00 | Current cumulative GPA |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Record creation date |
 
-    class Student {
-        -int id
-        -String name
-        -String program
-        -String email
-        -double currentCgpa
-        +calculateCGPA()
-        +checkEligibility()
-    }
+#### Courses
 
-    class Course {
-        -String code
-        -String title
-        -int creditHours
-        +getCode()
-        +getTitle()
-        +getCreditHours()
-    }
+Stores course catalog information.
 
-    class Grade {
-        -int studentId
-        -String courseCode
-        -String semester
-        -int year
-        -int attemptNo
-        -String grade
-        -double gradePoint
-        -String status
-        +getLatestGrade()
-    }
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| code | VARCHAR(10) | PRIMARY KEY | Course code (e.g., CS101) |
+| title | VARCHAR(200) | NOT NULL | Course title |
+| credit_hours | INT | NOT NULL | Course credit hours |
 
-    class Milestone {
-        -int id
-        -int studentId
-        -String courseCode
-        -String title
-        -String description
-        -Date targetDate
-        -String status
-        +create()
-        +updateStatus()
-    }
+#### Grades
 
-    class ActionPlan {
-        -int id
-        -Integer milestoneId
-        -int studentId
-        -String courseCode
-        -String task
-        -Timestamp deadline
-        -String status
-        -String grade
-        -Double gradePoint
-        -String progressNotes
-        +updateProgress()
-    }
+Stores student grade records with composite primary key.
 
-    User ||--o{ Student : manages
-    Student ||--o{ Course : enrolls
-    Student ||--o{ Grade : receives
-    Student ||--o{ Milestone : has
-    Milestone ||--o{ ActionPlan : contains
-    Course ||--o{ Grade : has
-    Course ||--o{ Milestone : relates
-    Course ||--o{ ActionPlan : relates
-```
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| student_id | INT | PRIMARY KEY, FOREIGN KEY | Reference to Students |
+| course_code | VARCHAR(10) | PRIMARY KEY, FOREIGN KEY | Reference to Courses |
+| attempt_no | INT | PRIMARY KEY, DEFAULT 1 | Attempt number (max 3) |
+| semester | VARCHAR(20) | NOT NULL | Academic semester |
+| year | INT | NOT NULL | Academic year |
+| grade | VARCHAR(5) | NOT NULL | Letter grade (A, B+, C-, etc.) |
+| grade_point | DECIMAL(3,2) | NOT NULL | Grade point value |
+| status | VARCHAR(20) | NOT NULL | Pass/Fail status |
 
-### Use Case Diagram
+#### Milestones
 
-```plantuml
-@startuml
-left to right direction
+Stores recovery plan milestones for students.
 
-actor "Academic Officer" as Officer
-actor "Course Administrator" as Admin
-actor "Student" as Student
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique milestone identifier |
+| student_id | INT | FOREIGN KEY | Reference to Students |
+| course_code | VARCHAR(10) | FOREIGN KEY | Reference to Courses |
+| title | VARCHAR(200) | NOT NULL | Milestone title |
+| description | TEXT | - | Milestone description |
+| target_date | DATE | NOT NULL | Target completion date |
+| status | VARCHAR(20) | DEFAULT 'active' | Milestone status |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Creation date |
 
-rectangle "Course Recovery System" {
-    usecase "Login" as UC1
-    usecase "Reset Password" as UC2
+#### ActionPlans
 
-    usecase "Create Recovery Plan" as UC3
-    usecase "Set Milestones" as UC4
-    usecase "Track Progress" as UC5
-    usecase "Generate Reports" as UC6
-    usecase "Check Eligibility" as UC7
+Stores action plans linked to milestones.
 
-    usecase "Manage Users" as UC8
-    usecase "View Analytics" as UC9
-    usecase "Advanced Reporting" as UC10
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique action plan identifier |
+| milestone_id | INT | FOREIGN KEY | Reference to Milestones |
+| student_id | INT | FOREIGN KEY | Reference to Students |
+| course_code | VARCHAR(10) | FOREIGN KEY | Reference to Courses |
+| task | TEXT | NOT NULL | Task description |
+| deadline | TIMESTAMP | NOT NULL | Task deadline |
+| status | VARCHAR(20) | DEFAULT 'pending' | Task status |
+| grade | VARCHAR(5) | - | Grade achieved (if applicable) |
+| grade_point | DECIMAL(3,2) | - | Grade point achieved |
+| progress_notes | TEXT | - | Progress notes |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Creation date |
+| updated_at | TIMESTAMP | ON UPDATE CURRENT_TIMESTAMP | Last update date |
 
-    Officer --> UC1
-    Officer --> UC2
-    Admin --> UC1
-    Admin --> UC2
+#### RecoveryPlans (Legacy)
 
-    Officer --> UC3
-    Officer --> UC4
-    Officer --> UC5
-    Officer --> UC6
-    Officer --> UC7
+Legacy table for backward compatibility.
 
-    Admin --> UC8
-    Admin --> UC9
-    Admin --> UC10
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique recovery plan identifier |
+| student_id | INT | FOREIGN KEY | Reference to Students |
+| course_code | VARCHAR(10) | FOREIGN KEY | Reference to Courses |
+| task | TEXT | NOT NULL | Recovery task |
+| deadline | TIMESTAMP | NOT NULL | Task deadline |
+| status | VARCHAR(20) | DEFAULT 'active' | Plan status |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Creation date |
 
-    UC3 --> UC4 : includes
-    UC4 --> UC5 : includes
-    UC6 --> UC7 : includes
+#### PasswordResetTokens
 
-    Student --> UC2 : self-service
-}
+Stores password reset tokens for secure password recovery.
 
-note right of UC2 : Password recovery\nvia email
-note bottom of UC9 : Dashboard analytics\nand statistics
-note bottom of UC10 : Interactive charts\nand detailed reports
-@enduml
-```
-
-### Sequence Diagram - Course Recovery Process
-
-```mermaid
-sequenceDiagram
-    participant Student
-    participant LoginPage
-    participant AuthServlet
-    participant UserEJB
-    participant UserDAO
-    participant Database
-
-    Student->>LoginPage: Enter credentials
-    LoginPage->>AuthServlet: POST /login
-    AuthServlet->>UserEJB: authenticateUser()
-    UserEJB->>UserDAO: getUserByUsername()
-    UserDAO->>Database: SELECT user data
-    Database-->>UserDAO: Return user data
-    UserDAO-->>UserEJB: Return user object
-    UserEJB-->>AuthServlet: Return authenticated user
-    AuthServlet->>AuthServlet: Store session
-    AuthServlet-->>Student: Redirect to dashboard
-
-    Note over AuthServlet,Database: Authentication Process
-
-    participant Officer
-    participant RecoveryPage
-    participant OfficerServlet
-    participant RecoveryEJB
-    participant MilestoneDAO
-    participant ActionPlanDAO
-    participant EmailUtil
-
-    Officer->>RecoveryPage: Create recovery plan
-    RecoveryPage->>OfficerServlet: POST /create-plan
-    OfficerServlet->>RecoveryEJB: createRecoveryPlan()
-    RecoveryEJB->>MilestoneDAO: addMilestone()
-    MilestoneDAO->>Database: INSERT milestone
-    Database-->>MilestoneDAO: Confirm insertion
-    RecoveryEJB->>ActionPlanDAO: addActionPlan()
-    ActionPlanDAO->>Database: INSERT action plan
-    Database-->>ActionPlanDAO: Confirm insertion
-    RecoveryEJB->>EmailUtil: sendNotification()
-    EmailUtil->>Student: Send email
-    RecoveryEJB-->>OfficerServlet: Return success
-    OfficerServlet-->>Officer: Redirect with success
-```
+| Column | Type | Constraints | Description |
+|--------|------|-------------|-------------|
+| id | INT | PRIMARY KEY, AUTO_INCREMENT | Unique token identifier |
+| user_id | INT | FOREIGN KEY | Reference to Users |
+| token | VARCHAR(255) | UNIQUE, NOT NULL | Secure random token |
+| expires_at | TIMESTAMP | NOT NULL | Token expiration date |
+| used | BOOLEAN | DEFAULT FALSE | Token usage flag |
+| created_at | TIMESTAMP | DEFAULT CURRENT_TIMESTAMP | Token creation date |
 
 ### Entity Relationship Diagram
 
-```mermaid
-erDiagram
-    Users {
-        int id PK
-        varchar username UQ
-        varchar password
-        varchar role
-        varchar email UQ
-        varchar status
-        timestamp created_at
-    }
+![ERD](diagrams/erd.png)
 
-    Students {
-        int id PK
-        varchar name
-        varchar program
-        varchar email UQ
-        decimal current_cgpa
-        timestamp created_at
-    }
+*Figure 6: Entity Relationship Diagram - Shows database tables and their relationships*
 
-    Courses {
-        varchar code PK
-        varchar title
-        int credit_hours
-    }
+### Database Indexes
 
-    Grades {
-        int student_id FK
-        varchar course_code FK
-        varchar semester
-        int year
-        int attempt_no
-        varchar grade
-        decimal grade_point
-        varchar status
-    }
+Performance optimization indexes:
 
-    Milestones {
-        int id PK
-        int student_id FK
-        varchar course_code FK
-        varchar title
-        text description
-        date target_date
-        varchar status
-        timestamp created_at
-    }
+```sql
+-- User indexes
+CREATE INDEX idx_users_username ON Users(username);
+CREATE INDEX idx_users_role ON Users(role);
 
-    ActionPlans {
-        int id PK
-        int milestone_id FK
-        int student_id FK
-        varchar course_code FK
-        text task
-        timestamp deadline
-        varchar status
-        varchar grade
-        decimal grade_point
-        text progress_notes
-        timestamp created_at
-        timestamp updated_at
-    }
+-- Student indexes
+CREATE INDEX idx_students_name ON Students(name);
+CREATE INDEX idx_students_program ON Students(program);
 
-    RecoveryPlans {
-        int id PK
-        int student_id FK
-        varchar course_code FK
-        text task
-        timestamp deadline
-        varchar status
-        timestamp created_at
-    }
+-- Grade indexes
+CREATE INDEX idx_grades_student ON Grades(student_id);
+CREATE INDEX idx_grades_status ON Grades(status);
 
-    PasswordResetTokens {
-        int id PK
-        int user_id FK
-        varchar token UQ
-        timestamp expires_at
-        boolean used
-        timestamp created_at
-    }
+-- Recovery system indexes
+CREATE INDEX idx_milestones_student ON Milestones(student_id);
+CREATE INDEX idx_milestones_course ON Milestones(course_code);
+CREATE INDEX idx_milestones_status ON Milestones(status);
+CREATE INDEX idx_action_plans_milestone ON ActionPlans(milestone_id);
+CREATE INDEX idx_action_plans_student ON ActionPlans(student_id);
+CREATE INDEX idx_action_plans_course ON ActionPlans(course_code);
+CREATE INDEX idx_action_plans_status ON ActionPlans(status);
 
-    Users ||--o{ Students : manages
-    Users ||--o{ PasswordResetTokens : has
-    Students ||--o{ Grades : receives
-    Students ||--o{ Milestones : creates
-    Students ||--o{ ActionPlans : participates
-    Students ||--o{ RecoveryPlans : has
-    Courses ||--o{ Grades : awarded
-    Courses ||--o{ Milestones : relates
-    Courses ||--o{ ActionPlans : relates
-    Courses ||--o{ RecoveryPlans : relates
-    Milestones ||--o{ ActionPlans : contains
+-- Password reset indexes
+CREATE INDEX idx_password_reset_token ON PasswordResetTokens(token);
+CREATE INDEX idx_password_reset_user ON PasswordResetTokens(user_id);
+CREATE INDEX idx_password_reset_expires ON PasswordResetTokens(expires_at);
 ```
 
-## Additional Features
+### Database Access APIs (DAO Layer)
 
-The system includes two additional features beyond the core requirements to enhance functionality and provide advanced capabilities. The first additional feature is a dashboard analytics system that provides real-time statistical insights for administrators. This feature displays key metrics including total student count, eligibility statistics, recovery plan success rates, and system usage patterns. The analytics are presented through visual metric cards on the admin dashboard, allowing administrators to quickly assess system performance and student progress without manual data analysis.
+The Data Access Object (DAO) pattern provides a clean abstraction for database operations.
 
-The second additional feature is an advanced reporting system with interactive charts and comprehensive data visualization. This feature provides detailed analytics through Chart.js implementations including CGPA distribution pie charts, grade distribution bar charts, and failed courses trend line charts \cite{chartjs-docs}. The advanced reporting page includes export capabilities for PDF generation and CSV data export, along with recent activity tracking and detailed statistical breakdowns. These additional features enhance the system's analytical capabilities and provide administrators with powerful tools for data-driven decision making and performance monitoring.
+#### DAO Classes
 
-## Screen Captures
+| DAO Class | Entity | Key Operations |
+|-----------|--------|----------------|
+| `UserDAO` | Users | `create()`, `findByUsername()`, `update()`, `delete()`, `getAll()` |
+| `StudentDAO` | Students | `getAll()`, `getById()`, `calculateCGPA()`, `getFailedCourseCount()` |
+| `RecoveryDAO` | RecoveryPlans | `save()`, `getByStudentId()`, `updateStatus()`, `delete()` |
+| `MilestoneDAO` | Milestones | `save()`, `getByStudentId()`, `updateStatus()` |
+| `ActionPlanDAO` | ActionPlans | `save()`, `getByMilestoneId()`, `updateStatus()` |
+| `AnalyticsDAO` | Multiple | `getSystemAnalytics()`, `getCgpaDistribution()`, `getGradeDistribution()` |
+| `PasswordResetDAO` | PasswordResetTokens | `saveToken()`, `findToken()`, `markAsUsed()` |
 
-Figure 1 shows the system login page where users enter their credentials to access the Course Recovery System. The page includes fields for username and password entry, a remember me option, and a forgot password link. The interface uses a clean, professional design with the system logo and responsive layout that adapts to different screen sizes.
+#### DAO Implementation Pattern
 
-Figure 2 displays the admin dashboard after successful login. The dashboard presents key system metrics in visual cards including total student count, eligibility statistics, active recovery plans, and success rates. Navigation links provide access to user management, recovery planning, eligibility checking, and advanced reporting features. The dashboard serves as the central hub for administrative functions.
+```java
+public class UserDAO {
+    private static final String FIND_BY_USERNAME = 
+        "SELECT * FROM Users WHERE username = ?";
+    
+    public static User findByUsername(String username) throws SQLException {
+        try (Connection conn = DBConnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(FIND_BY_USERNAME)) {
+            
+            ps.setString(1, username);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToUser(rs);
+                }
+            }
+        }
+        return null;
+    }
+    
+    private static User mapResultSetToUser(ResultSet rs) throws SQLException {
+        return new User(
+            rs.getInt("id"),
+            rs.getString("username"),
+            rs.getString("password"),
+            rs.getString("role"),
+            rs.getString("email"),
+            rs.getString("status")
+        );
+    }
+}
+```
 
-Figure 3 illustrates the user management interface accessible to administrators. The page shows a table listing all system users with their details including ID, username, role, email, and status. Action buttons allow administrators to edit user information or deactivate accounts. A prominent "Add User" button provides access to the user creation form.
+#### Database Connection Management
 
-Figure 4 depicts the add user form used for creating new system accounts. The form includes fields for username, password, role selection (admin or officer), and email address. Client-side validation ensures data integrity before submission, and server-side validation provides additional security and format checking.
+```java
+public class DBConnect {
+    private static DataSource dataSource;
+    
+    static {
+        // Initialize connection pool
+        BasicDataSource ds = new BasicDataSource();
+        ds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+        ds.setUrl(System.getenv("DB_URL"));
+        ds.setUsername(System.getenv("DB_USERNAME"));
+        ds.setPassword(System.getenv("DB_PASSWORD"));
+        ds.setInitialSize(5);
+        ds.setMaxTotal(20);
+        dataSource = ds;
+    }
+    
+    public static Connection getConnection() throws SQLException {
+        return dataSource.getConnection();
+    }
+}
+```
 
-Figure 5 shows the advanced reports page featuring interactive data visualizations. The page includes a CGPA distribution pie chart showing student performance ranges, a grade distribution bar chart displaying grade frequencies, and a failed courses trend line chart illustrating performance patterns over time. Export buttons allow administrators to generate PDF reports or CSV data files.
+---
 
-Figure 6 displays the recovery plan management interface for academic officers. The page shows current recovery plans with student information, course details, assigned tasks, deadlines, and completion status. Officers can create new recovery plans, update existing ones, and monitor student progress through this centralized interface.
+## Appendix
 
-Figure 7 illustrates the eligibility checking page where academic officers can verify student progression requirements. The page displays student lists with CGPA calculations and failed course counts. Students meeting the criteria of minimum 2.0 CGPA and no more than three failed courses are marked as eligible for progression.
+### Technology Stack
 
-Figure 8 shows the academic performance report generation interface. Officers can select students and generate detailed reports showing course grades, grade points, cumulative GPA calculations, and semester-by-semester performance breakdowns. The reports help track student academic progress and identify areas requiring intervention.
+| Layer | Technology |
+|-------|------------|
+| **Web Server** | Apache TomEE 10.1.52 |
+| **Web Framework** | Jakarta Servlet 6.0, JSP 3.1 |
+| **Business Components** | Enterprise JavaBeans (EJB) |
+| **Database** | MySQL 8.0 |
+| **Connection Pool** | Apache Commons DBCP 2.11.0 |
+| **Security** | BCrypt password hashing, CSRF tokens |
+| **Email** | Jakarta Mail 2.1.0 |
+| **Utilities** | Jackson 2.15.2 (JSON), Commons BeanUtils |
 
-## References
+### Role-Based Access Control Matrix
 
-\bibliography{references}
+| Feature | Admin | Officer | Unauthenticated |
+|---------|-------|---------|-----------------|
+| Login | ✓ | ✓ | - |
+| User Management | ✓ | ✓ | ✗ |
+| Eligibility Check | ✓ | ✓ | ✗ |
+| Academic Reports | ✓ | ✓ | ✗ |
+| Advanced Reports | ✓ | ✓ | ✗ |
+| Recovery Plans | ✗ | ✓ | ✗ |
+| Password Reset | ✓ | ✓ | ✓ |
+
+### Environment Variables
+
+```bash
+# Database Configuration
+DB_URL=jdbc:mysql://localhost:3306/crs_db
+DB_USERNAME=root
+DB_PASSWORD=secret
+
+# Email Configuration
+MAIL_SMTP_HOST=smtp.example.com
+MAIL_SMTP_PORT=587
+MAIL_SMTP_USERNAME=user@example.com
+MAIL_SMTP_PASSWORD=secret
+MAIL_SMTP_AUTH=true
+MAIL_SMTP_STARTTLS_ENABLE=true
+```
+
+---
+
+*Documentation generated for Course Recovery System v1.0*

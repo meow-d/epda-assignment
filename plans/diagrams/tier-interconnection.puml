@@ -1,0 +1,67 @@
+@startuml tier-interconnection
+title Course Recovery System - Tier Interconnection
+
+package "Client Tier" {
+  [Web Browser] as Browser
+}
+
+package "Presentation Tier\n(Jakarta EE Web Container)" {
+  [JSP Pages\nadmin/*.jsp\nofficer/*.jsp\nlogin.jsp] as JSP
+  [Servlets\nAdminServlet\nOfficerServlet\nAuthServlet\netc.] as Servlet
+  [SecurityFilter] as Filter
+}
+
+package "Business Tier\n(EJB Container)" {
+  [UserEJB] as UserEJB
+  [AcademicEJB] as AcademicEJB
+  [RecoveryEJB] as RecoveryEJB
+  [AnalyticsEJB] as AnalyticsEJB
+}
+
+package "Data Access Tier\n(DAO Layer)" {
+  [UserDAO] as UserDAO
+  [StudentDAO] as StudentDAO
+  [RecoveryDAO] as RecoveryDAO
+  [AnalyticsDAO] as AnalyticsDAO
+  [ActionPlanDAO] as ActionPlanDAO
+  [MilestoneDAO] as MilestoneDAO
+}
+
+package "Data Tier\n(MySQL Database)" {
+  database "crs_db" as MySQL
+}
+
+package "External Services" {
+  [SMTP Mail Server] as SMTP
+}
+
+Browser <--> Filter : "HTTP/HTTPS"
+Filter <--> JSP : "Forward/Include"
+Filter <--> Servlet : "Intercept"
+JSP <--> Servlet : "Forward"
+
+Servlet --> UserEJB : "Business Logic"
+Servlet --> AcademicEJB
+Servlet --> RecoveryEJB
+Servlet --> AnalyticsEJB
+
+UserEJB --> UserDAO : "Data Access"
+AcademicEJB --> StudentDAO
+AcademicEJB --> AnalyticsDAO
+RecoveryEJB --> RecoveryDAO
+RecoveryEJB --> ActionPlanDAO
+RecoveryEJB --> MilestoneDAO
+AnalyticsEJB --> AnalyticsDAO
+
+UserDAO --> MySQL : "JDBC"
+StudentDAO --> MySQL
+RecoveryDAO --> MySQL
+AnalyticsDAO --> MySQL
+ActionPlanDAO --> MySQL
+MilestoneDAO --> MySQL
+
+UserEJB --> SMTP : "Email"
+AcademicEJB --> SMTP
+RecoveryEJB --> SMTP
+
+@enduml

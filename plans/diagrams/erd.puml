@@ -1,0 +1,107 @@
+@startuml erd
+title Course Recovery System - Entity Relationship Diagram
+
+entity Users {
+  *id : INT <<PK>>
+  --
+  username : VARCHAR(50) <<UNIQUE>>
+  password : VARCHAR(255)
+  role : VARCHAR(20)
+  email : VARCHAR(100) <<UNIQUE>>
+  status : VARCHAR(20)
+  created_at : TIMESTAMP
+}
+
+entity Students {
+  *id : INT <<PK>>
+  --
+  name : VARCHAR(100)
+  program : VARCHAR(100)
+  email : VARCHAR(100) <<UNIQUE>>
+  current_cgpa : DECIMAL(3,2)
+  created_at : TIMESTAMP
+}
+
+entity Courses {
+  *code : VARCHAR(10) <<PK>>
+  --
+  title : VARCHAR(200)
+  credit_hours : INT
+}
+
+entity Grades {
+  *student_id : INT <<PK, FK>>
+  *course_code : VARCHAR(10) <<PK, FK>>
+  *attempt_no : INT <<PK>>
+  --
+  semester : VARCHAR(20)
+  year : INT
+  grade : VARCHAR(5)
+  grade_point : DECIMAL(3,2)
+  status : VARCHAR(20)
+}
+
+entity Milestones {
+  *id : INT <<PK>>
+  --
+  student_id : INT <<FK>>
+  course_code : VARCHAR(10) <<FK>>
+  title : VARCHAR(200)
+  description : TEXT
+  target_date : DATE
+  status : VARCHAR(20)
+  created_at : TIMESTAMP
+}
+
+entity ActionPlans {
+  *id : INT <<PK>>
+  --
+  milestone_id : INT <<FK>>
+  student_id : INT <<FK>>
+  course_code : VARCHAR(10) <<FK>>
+  task : TEXT
+  deadline : TIMESTAMP
+  status : VARCHAR(20)
+  grade : VARCHAR(5)
+  grade_point : DECIMAL(3,2)
+  progress_notes : TEXT
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+}
+
+entity RecoveryPlans {
+  *id : INT <<PK>>
+  --
+  student_id : INT <<FK>>
+  course_code : VARCHAR(10) <<FK>>
+  task : TEXT
+  deadline : TIMESTAMP
+  status : VARCHAR(20)
+  created_at : TIMESTAMP
+}
+
+entity PasswordResetTokens {
+  *id : INT <<PK>>
+  --
+  user_id : INT <<FK>>
+  token : VARCHAR(255) <<UNIQUE>>
+  expires_at : TIMESTAMP
+  used : BOOLEAN
+  created_at : TIMESTAMP
+}
+
+' Relationships
+Users ||..o{ PasswordResetTokens : "generates"
+Students ||..o{ Grades : "receives"
+Courses ||..o{ Grades : "has"
+Students ||..o{ Milestones : "assigned"
+Courses ||..o{ Milestones : "defines"
+Students ||..o{ ActionPlans : "assigned"
+Courses ||..o{ ActionPlans : "defines"
+Milestones ||..o{ ActionPlans : "contains"
+Students ||..o{ RecoveryPlans : "has"
+Courses ||..o{ RecoveryPlans : "defines"
+
+note bottom: RecoveryPlans\n(Legacy table for\nbackward compatibility)
+
+@enduml

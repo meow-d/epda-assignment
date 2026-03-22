@@ -1,0 +1,79 @@
+flowchart LR
+    subgraph Client["Client Tier"]
+        Browser[Web Browser]
+    end
+    
+    subgraph Presentation["Presentation Tier\n(Jakarta EE Web Container)"]
+        JSP[JSP Pages\n- admin/*.jsp\n- officer/*.jsp\n- login.jsp]
+        Servlet[Servlets\n- AdminServlet\n- OfficerServlet\n- AuthServlet\n- AdvancedReportServlet\n- ExportCsvServlet]
+        Filter[Filters\n- SecurityFilter]
+    end
+    
+    subgraph Business["Business Tier\n(EJB Container)"]
+        UserEJB[UserEJB\nUser Management]
+        AcademicEJB[AcademicEJB\nAcademic Operations]
+        RecoveryEJB[RecoveryEJB\nRecovery Plans]
+        AnalyticsEJB[AnalyticsEJB\nAnalytics & Reports]
+    end
+    
+    subgraph Data["Data Access Tier\n(DAO Layer)"]
+        UserDAO[UserDAO]
+        StudentDAO[StudentDAO]
+        RecoveryDAO[RecoveryDAO]
+        AnalyticsDAO[AnalyticsDAO]
+        ActionPlanDAO[ActionPlanDAO]
+        MilestoneDAO[MilestoneDAO]
+    end
+    
+    subgraph Database["Data Tier\n(MySQL Database)"]
+        MySQL[(crs_db)]
+    end
+    
+    subgraph External["External Services"]
+        SMTP[SMTP Mail Server]
+    end
+    
+    %% Connections
+    Browser <-->|HTTP/HTTPS| Filter
+    Filter <-->|Forward/Include| JSP
+    Filter <-->|Intercept| Servlet
+    JSP <-->|Forward| Servlet
+    
+    Servlet -->|Business Logic| UserEJB
+    Servlet -->|Business Logic| AcademicEJB
+    Servlet -->|Business Logic| RecoveryEJB
+    Servlet -->|Business Logic| AnalyticsEJB
+    
+    UserEJB -->|Data Access| UserDAO
+    AcademicEJB -->|Data Access| StudentDAO
+    AcademicEJB -->|Data Access| AnalyticsDAO
+    RecoveryEJB -->|Data Access| RecoveryDAO
+    RecoveryEJB -->|Data Access| ActionPlanDAO
+    RecoveryEJB -->|Data Access| MilestoneDAO
+    AnalyticsEJB -->|Data Access| AnalyticsDAO
+    
+    UserDAO -->|JDBC| MySQL
+    StudentDAO -->|JDBC| MySQL
+    RecoveryDAO -->|JDBC| MySQL
+    AnalyticsDAO -->|JDBC| MySQL
+    ActionPlanDAO -->|JDBC| MySQL
+    MilestoneDAO -->|JDBC| MySQL
+    
+    UserEJB -->|Email| SMTP
+    AcademicEJB -->|Email| SMTP
+    RecoveryEJB -->|Email| SMTP
+    
+    %% Styling
+    classDef client fill:#e1f5fe,stroke:#0277bd
+    classDef presentation fill:#fff3e0,stroke:#ef6c00
+    classDef business fill:#f3e5f5,stroke:#7b1fa2
+    classDef data fill:#e8f5e9,stroke:#2e7d32
+    classDef database fill:#ffebee,stroke:#c62828
+    classDef external fill:#fce4ec,stroke:#c2185b
+    
+    class Browser client
+    class JSP,Servlet,Filter presentation
+    class UserEJB,AcademicEJB,RecoveryEJB,AnalyticsEJB business
+    class UserDAO,StudentDAO,RecoveryDAO,AnalyticsDAO,ActionPlanDAO,MilestoneDAO data
+    class MySQL database
+    class SMTP external

@@ -1,0 +1,43 @@
+sequenceDiagram
+    title Login Authentication Flow
+    
+    participant User
+    participant Browser
+    participant SecurityFilter
+    participant LoginJSP
+    participant AuthServlet
+    participant UserEJB
+    participant UserDAO
+    participant Database
+    
+    User->>Browser: Navigate to /login.jsp
+    Browser->>SecurityFilter: GET /login.jsp
+    SecurityFilter->>SecurityFilter: Check session
+    SecurityFilter-->>LoginJSP: Allow (not logged in)
+    LoginJSP-->>Browser: Render login form + CSRF token
+    Browser-->>User: Display login page
+    
+    User->>Browser: Enter credentials + Submit
+    Browser->>SecurityFilter: POST /auth/login
+    SecurityFilter->>SecurityFilter: Validate CSRF token
+    SecurityFilter->>AuthServlet: Forward request
+    AuthServlet->>UserEJB: authenticate(username, password)
+    UserEJB->>UserDAO: findByUsername(username)
+    UserDAO->>Database: SELECT * FROM Users
+    Database-->>UserDAO: User record
+    UserDAO-->>UserEJB: User object
+    UserEJB->>UserEJB: Verify password (BCrypt)
+    UserEJB-->>AuthServlet: User object (if valid)
+    
+    alt Authentication Successful
+        AuthServlet->>AuthServlet: Create session + store user/role
+        AuthServlet-->>Browser: 302 Redirect (based on role)
+        Browser->>SecurityFilter: GET /admin/ or /officer/
+        SecurityFilter->>SecurityFilter: Validate session + role
+        SecurityFilter-->>Dashboard: Allow access
+        Dashboard-->>Browser: Render dashboard
+        Browser-->>User: Display dashboard
+    else Authentication Failed
+        AuthServlet-->>Browser: 302 Redirect to /login.jsp?error=auth
+        Browser-->>User: Display error message
+    end

@@ -1,0 +1,76 @@
+@startuml architecture
+title Course Recovery System - System Architecture
+
+package "Presentation Tier (Web Layer)" {
+  [JSP Pages] as JSP
+  [Servlets] as Servlet
+  [Security Filter] as Filter
+}
+
+package "Business Tier (EJB Layer)" {
+  [UserEJB] as UserEJB
+  [AcademicEJB] as AcademicEJB
+  [RecoveryEJB] as RecoveryEJB
+  [AnalyticsEJB] as AnalyticsEJB
+}
+
+package "Data Access Tier (DAO Layer)" {
+  [UserDAO] as UserDAO
+  [StudentDAO] as StudentDAO
+  [RecoveryDAO] as RecoveryDAO
+  [AnalyticsDAO] as AnalyticsDAO
+  [ActionPlanDAO] as ActionPlanDAO
+  [MilestoneDAO] as MilestoneDAO
+  [PasswordResetDAO] as PasswordResetDAO
+}
+
+package "Data Tier" {
+  database "MySQL Database" as DB {
+    [Users] as Users
+    [Students] as Students
+    [Courses] as Courses
+    [Grades] as Grades
+    [Milestones] as Milestones
+    [ActionPlans] as ActionPlans
+    [RecoveryPlans] as RecoveryPlans
+    [PasswordResetTokens] as Tokens
+  }
+}
+
+' External Services
+package "External Services" {
+  [SMTP Mail Server] as Mail
+}
+
+' Relationships
+JSP --> Servlet : "Forward/Include"
+Servlet --> Filter : "Intercepts All Requests"
+Filter --> Servlet : "Allow/Deny Access"
+
+Servlet --> UserEJB : "Business Logic"
+Servlet --> AcademicEJB
+Servlet --> RecoveryEJB
+Servlet --> AnalyticsEJB
+
+UserEJB --> UserDAO : "Data Operations"
+AcademicEJB --> StudentDAO
+AcademicEJB --> AnalyticsDAO
+RecoveryEJB --> RecoveryDAO
+RecoveryEJB --> ActionPlanDAO
+RecoveryEJB --> MilestoneDAO
+AnalyticsEJB --> AnalyticsDAO
+
+UserDAO --> Users : "CRUD"
+StudentDAO --> Students : "CRUD"
+RecoveryDAO --> RecoveryPlans : "CRUD"
+ActionPlanDAO --> ActionPlans : "CRUD"
+MilestoneDAO --> Milestones : "CRUD"
+AnalyticsDAO --> Grades : "Read"
+AnalyticsDAO --> Students : "Read"
+PasswordResetDAO --> Tokens : "CRUD"
+
+UserEJB --> Mail : "Send Email Notifications"
+AcademicEJB --> Mail
+RecoveryEJB --> Mail
+
+@enduml

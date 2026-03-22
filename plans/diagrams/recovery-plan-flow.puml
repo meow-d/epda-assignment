@@ -1,0 +1,45 @@
+@startuml recovery-plan-flow
+title Create Recovery Plan Flow
+
+participant "Officer" as Officer
+participant "Browser" as Browser
+participant "SecurityFilter" as Filter
+participant "OfficerServlet" as Servlet
+participant "RecoveryEJB" as EJB
+participant "RecoveryDAO" as DAO
+participant "Database" as DB
+participant "EmailUtil" as Email
+participant "SMTP" as SMTP
+
+Officer -> Browser : Navigate to Recovery Plans
+Browser -> Filter : GET /officer/recovery-plan
+Filter -> Filter : Validate session + role
+Filter -> Servlet : Forward request
+Servlet -> DAO : getAllRecoveryPlans()
+DAO -> DB : SELECT * FROM RecoveryPlans
+DB --> DAO : Recovery plans
+DAO --> Servlet : List<RecoveryPlan>
+Servlet --> Browser : Render recoveryPlan.jsp
+Browser --> Officer : Display recovery plans
+
+Officer -> Browser : Fill add plan form + Submit
+Browser -> Filter : POST /officer/add-recovery-plan
+Filter -> Filter : Validate CSRF token
+Filter -> Servlet : Forward request
+Servlet -> Servlet : Extract parameters
+Servlet -> EJB : createRecoveryPlan(studentId, courseCode, task, deadline)
+EJB -> DAO : save(recoveryPlan)
+DAO -> DB : INSERT INTO RecoveryPlans
+DB --> DAO : Generated ID
+DAO --> EJB : RecoveryPlan with ID
+EJB -> EJB : sendRecoveryPlanEmail()
+EJB -> Email : sendEmail(to, subject, body)
+Email -> SMTP : Send email via SMTP
+SMTP --> Email : Email sent
+EJB --> Servlet : RecoveryPlan created
+Servlet --> Browser : 302 Redirect to /officer/recovery-plan
+Browser -> Filter : GET /officer/recovery-plan
+Filter --> Browser : Render updated page
+Browser --> Officer : Display success message + updated list
+
+@enduml
