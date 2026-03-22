@@ -23,8 +23,6 @@ package "Data Access Tier\n(DAO Layer)" {
   [StudentDAO] as StudentDAO
   [RecoveryDAO] as RecoveryDAO
   [AnalyticsDAO] as AnalyticsDAO
-  [ActionPlanDAO] as ActionPlanDAO
-  [MilestoneDAO] as MilestoneDAO
 }
 
 package "Data Tier\n(MySQL Database)" {
@@ -49,16 +47,12 @@ UserEJB --> UserDAO : "Data Access"
 AcademicEJB --> StudentDAO
 AcademicEJB --> AnalyticsDAO
 RecoveryEJB --> RecoveryDAO
-RecoveryEJB --> ActionPlanDAO
-RecoveryEJB --> MilestoneDAO
 AnalyticsEJB --> AnalyticsDAO
 
 UserDAO --> MySQL : "JDBC"
 StudentDAO --> MySQL
 RecoveryDAO --> MySQL
 AnalyticsDAO --> MySQL
-ActionPlanDAO --> MySQL
-MilestoneDAO --> MySQL
 
 UserEJB --> SMTP : "Email"
 AcademicEJB --> SMTP

@@ -21,8 +21,6 @@ flowchart LR
         StudentDAO[StudentDAO]
         RecoveryDAO[RecoveryDAO]
         AnalyticsDAO[AnalyticsDAO]
-        ActionPlanDAO[ActionPlanDAO]
-        MilestoneDAO[MilestoneDAO]
     end
     
     subgraph Database["Data Tier\n(MySQL Database)"]
@@ -48,16 +46,12 @@ flowchart LR
     AcademicEJB -->|Data Access| StudentDAO
     AcademicEJB -->|Data Access| AnalyticsDAO
     RecoveryEJB -->|Data Access| RecoveryDAO
-    RecoveryEJB -->|Data Access| ActionPlanDAO
-    RecoveryEJB -->|Data Access| MilestoneDAO
     AnalyticsEJB -->|Data Access| AnalyticsDAO
     
     UserDAO -->|JDBC| MySQL
     StudentDAO -->|JDBC| MySQL
     RecoveryDAO -->|JDBC| MySQL
     AnalyticsDAO -->|JDBC| MySQL
-    ActionPlanDAO -->|JDBC| MySQL
-    MilestoneDAO -->|JDBC| MySQL
     
     UserEJB -->|Email| SMTP
     AcademicEJB -->|Email| SMTP
@@ -74,6 +68,6 @@ flowchart LR
     class Browser client
     class JSP,Servlet,Filter presentation
     class UserEJB,AcademicEJB,RecoveryEJB,AnalyticsEJB business
-    class UserDAO,StudentDAO,RecoveryDAO,AnalyticsDAO,ActionPlanDAO,MilestoneDAO data
+    class UserDAO,StudentDAO,RecoveryDAO,AnalyticsDAO data
     class MySQL database
     class SMTP external
