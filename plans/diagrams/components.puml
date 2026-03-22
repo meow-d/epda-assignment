@@ -1,0 +1,71 @@
+@startuml components
+title Course Recovery System - Component Diagram
+
+package "Web Components" {
+  component "Login JSP" as LoginJSP
+  component "Admin Dashboard JSP" as AdminDash
+  component "Officer Dashboard JSP" as OfficerDash
+  component "Academic Report JSP" as AcademicJSP
+  component "Eligibility JSP" as EligibilityJSP
+  component "Recovery Plan JSP" as RecoveryJSP
+  component "Advanced Reports JSP" as AdvancedJSP
+  component "User Management JSP" as UserMgmt
+}
+
+package "Servlet Controllers" {
+  component "AuthServlet\n/auth/*" as AuthServlet
+  component "AdminServlet\n/admin/*" as AdminServlet
+  component "OfficerServlet\n/officer/*" as OfficerServlet
+  component "AdvancedReportServlet\n/admin/advanced-reports" as ReportServlet
+  component "ExportCsvServlet\n/admin/export-csv" as ExportServlet
+}
+
+package "Security" {
+  component "SecurityFilter\n/*" as SecurityFilter
+  component "CSRF Utility" as CSRF
+}
+
+package "Business Components (EJB)" {
+  component "UserEJB" as UserEJB
+  component "AcademicEJB" as AcademicEJB
+  component "RecoveryEJB" as RecoveryEJB
+  component "AnalyticsEJB" as AnalyticsEJB
+}
+
+package "Data Access (DAO)" {
+  component "UserDAO" as UserDAO
+  component "StudentDAO" as StudentDAO
+  component "RecoveryDAO" as RecoveryDAO
+  component "AnalyticsDAO" as AnalyticsDAO
+}
+
+note "Admin Role:\n- User Management\n- Eligibility Check\n- Academic Reports\n- Advanced Reports" as AdminNote
+note "Officer Role:\n- All Admin Features\n- PLUS Recovery Plans" as OfficerNote
+
+LoginJSP --> AuthServlet : "POST Login"
+AdminDash --> AdminServlet : "GET /admin/"
+OfficerDash --> OfficerServlet : "GET /officer/"
+AcademicJSP --> AdminServlet : "GET /admin/academic-report"
+EligibilityJSP --> AdminServlet : "GET /admin/eligibility"
+RecoveryJSP --> OfficerServlet : "GET /officer/recovery-plan"
+AdvancedJSP --> ReportServlet : "GET /admin/advanced-reports"
+UserMgmt --> AdminServlet : "GET/POST /admin/users"
+
+AuthServlet --> UserEJB : "Authentication"
+AdminServlet --> UserEJB : "User Management"
+AdminServlet --> AcademicEJB : "Academic Operations"
+OfficerServlet --> RecoveryEJB : "Recovery Plans"
+ReportServlet --> AnalyticsEJB : "Analytics Data"
+ExportServlet --> AnalyticsEJB : "Export Data"
+
+UserEJB --> UserDAO : "User Operations"
+AcademicEJB --> StudentDAO : "Student Data"
+RecoveryEJB --> RecoveryDAO : "Recovery Operations"
+AnalyticsEJB --> AnalyticsDAO : "Analytics Queries"
+
+SecurityFilter --> CSRF : "Validate Tokens"
+SecurityFilter ..> AuthServlet : "Allow /auth/*"
+SecurityFilter ..> AdminServlet : "Check Role Access"
+SecurityFilter ..> OfficerServlet : "Check Role Access"
+
+@enduml
