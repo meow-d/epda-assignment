@@ -196,36 +196,3 @@ Backup procedures should include daily database dumps and periodic verification 
 The Course Recovery System provides a functional platform for managing student academic recovery programs. The architecture follows established Jakarta EE patterns and demonstrates proper separation of concerns. Security measures protect user data and prevent common web vulnerabilities. The database design supports the core business requirements of grade tracking and recovery plan management. Email notifications maintain communication with students throughout their recovery process.
 
 The system serves as a foundation that can be extended with additional features such as advanced analytics, mobile applications, or integration with institutional systems. The modular architecture allows individual components to be enhanced or replaced without affecting the overall system structure.
-
----
-
-# Appendix
-
-### Technology Stack
-
-| Layer | Technology |
-|-------|------------|
-| Web Server | Apache TomEE 10.1.52 |
-| Web Framework | Jakarta Servlet 6.0, JSP 3.1 |
-| Business Components | Enterprise JavaBeans |
-| Database | MySQL 8.0 |
-| Connection Pool | Apache Commons DBCP 2.11.0 |
-| Security | BCrypt, CSRF tokens |
-| Email | Jakarta Mail 2.1.0 |
-| Utilities | Jackson 2.15.2, Commons BeanUtils |
-
-### Environment Variables
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| DB_URL | JDBC connection URL | jdbc:mysql://localhost:3306/crs_db |
-| DB_USERNAME | Database username | root |
-| DB_PASSWORD | Database password | secret |
-| MAIL_SMTP_HOST | SMTP server hostname | smtp.example.com |
-| MAIL_SMTP_PORT | SMTP server port | 587 |
-| MAIL_SMTP_USERNAME | SMTP username | user@example.com |
-| MAIL_SMTP_PASSWORD | SMTP password | secret |
-| MAIL_SMTP_AUTH | SMTP authentication flag | true |
-| MAIL_SMTP_STARTTLS_ENABLE | TLS encryption flag | true |
-
-Documentation generated for Course Recovery System version 1.0.
