@@ -74,7 +74,7 @@
                     </div>
 
                     <div class="actions">
-                        <form action="${pageContext.request.contextPath}/officer/send-report" method="post">
+                        <form action="${pageContext.request.contextPath}/admin/send-report" method="post">
                             <input type="hidden" name="csrfToken" value="<%= com.crs.util.CSRFUtil.getToken(request) %>">
                             <input type="hidden" name="studentId" value="${student.id}">
                             <button type="submit" class="btn btn-primary">Send Report via Email</button>

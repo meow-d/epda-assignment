@@ -128,6 +128,10 @@ public class AdminServlet extends HttpServlet {
                 System.out.println("[AdminServlet] Handling POST /delete-user");
                 handleDeleteUser(request, response);
                 break;
+            case "/send-report":
+                System.out.println("[AdminServlet] Handling POST /send-report");
+                handleSendReport(request, response);
+                break;
             default:
                 System.out.println("[AdminServlet] Unknown POST path: " + path + ", redirecting to /admin/");
                 response.sendRedirect(request.getContextPath() + "/admin/");
@@ -461,6 +465,24 @@ public class AdminServlet extends HttpServlet {
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
             throw new ServletException("Error in handleAcademicReport: " + e.getMessage(), e);
+        }
+    }
+
+    private void handleSendReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[AdminServlet] handleSendReport called");
+        int studentId = Integer.parseInt(request.getParameter("studentId"));
+
+        try {
+            com.crs.ejb.AcademicEJB academicEJB = new com.crs.ejb.AcademicEJB();
+            academicEJB.sendAcademicReport(studentId);
+            request.setAttribute("success", "Academic report sent successfully");
+            request.setAttribute("currentPage", "academic-report");
+            request.getRequestDispatcher("/WEB-INF/admin/academicReport.jsp").forward(request, response);
+        } catch (Exception e) {
+            System.err.println("========== [AdminServlet] ERROR in handleSendReport ==========");
+            System.err.println("Message: " + e.getMessage());
+            e.printStackTrace(System.err);
+            throw new ServletException("Error in handleSendReport: " + e.getMessage(), e);
         }
     }
 }

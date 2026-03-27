@@ -88,9 +88,6 @@ public class OfficerServlet extends HttpServlet {
             case "/delete-recovery-plan":
                 handleDeleteRecoveryPlan(request, response);
                 break;
-            case "/send-report":
-                handleSendReport(request, response);
-                break;
             default:
                 response.sendRedirect(request.getContextPath() + "/WEB-INF/officer/index.jsp");
         }
@@ -209,24 +206,6 @@ public class OfficerServlet extends HttpServlet {
             System.err.println("Message: " + e.getMessage());
             e.printStackTrace(System.err);
             throw new ServletException("Error in handleDeleteRecoveryPlan: " + e.getMessage(), e);
-        }
-    }
-
-    private void handleSendReport(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("[OfficerServlet] handleSendReport called");
-        int studentId = Integer.parseInt(request.getParameter("studentId"));
-
-        try {
-            com.crs.ejb.AcademicEJB academicEJB = new com.crs.ejb.AcademicEJB();
-            academicEJB.sendAcademicReport(studentId);
-            request.setAttribute("success", "Academic report sent successfully");
-            request.setAttribute("currentPage", "recovery-plan");
-            request.getRequestDispatcher("/WEB-INF/officer/recoveryPlan.jsp").forward(request, response);
-        } catch (Exception e) {
-            System.err.println("========== [OfficerServlet] ERROR in handleSendReport ==========");
-            System.err.println("Message: " + e.getMessage());
-            e.printStackTrace(System.err);
-            throw new ServletException("Error in handleSendReport: " + e.getMessage(), e);
         }
     }
 }
