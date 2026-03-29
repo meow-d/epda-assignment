@@ -8,7 +8,7 @@
             <c:if test="${not empty error}">
                 <div class="error-message">${error}</div>
             </c:if>
-            <form action="${pageContext.request.contextPath}/admindash/add-user" method="post" class="form-group">
+            <form action="${pageContext.request.contextPath}/admin/add-user" method="post" class="form-group">
                 <input type="hidden" name="csrfToken" value="<%= CSRFUtil.getToken(request) %>">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>

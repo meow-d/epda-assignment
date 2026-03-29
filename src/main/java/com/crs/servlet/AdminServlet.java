@@ -239,11 +239,6 @@ public class AdminServlet extends HttpServlet {
             userEJB.addUser(user);
             System.out.println("[AdminServlet] User added successfully, redirecting to /admin/users");
             response.sendRedirect(request.getContextPath() + "/admin/users");
-        } catch (SQLException e) {
-            System.err.println("========== [AdminServlet] SQL ERROR in handleAddUser ==========");
-            System.err.println("Message: " + e.getMessage());
-            e.printStackTrace(System.err);
-            throw new ServletException("Database error in handleAddUser: " + e.getMessage(), e);
         } catch (Exception e) {
             System.err.println("========== [AdminServlet] ERROR in handleAddUser ==========");
             System.err.println("Message: " + e.getMessage());
