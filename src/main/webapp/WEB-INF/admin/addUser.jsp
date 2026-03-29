@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="com.crs.util.CSRFUtil" %>
 <% request.setAttribute("currentPage", "add-user"); %>
 <% request.setAttribute("pageTitle", "Add User - Course Recovery System"); %>
 <jsp:include page="/WEB-INF/includes/header.jsp" />
@@ -8,6 +9,7 @@
                 <div class="error-message">${error}</div>
             </c:if>
             <form action="${pageContext.request.contextPath}/admindash/add-user" method="post" class="form-group">
+                <input type="hidden" name="csrfToken" value="<%= CSRFUtil.getToken(request) %>">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
 
